@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- warehouse simulation environment -->
+  <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find warehouse_simulation)/models"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find warehouse_simulation)/models"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find warehouse_simulation)/worlds/warehouse.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="gui" value="true"/> 
+  </include>
+
+<!-- add robot  -->  
+  <arg name="x_pos" default="0"/>
+  <arg name="y_pos" default="0"/>
+  <arg name="z_pos" default="0"/>  
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find warehouse_simulation)/urdf/pioneer3dx.xacro"/>
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model pioneer3dx -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" ns="/pioneer3dx" respawn="false" output="screen">
+    <param name="publish_frequency" value="40.0"/>
+  </node>
+
+<!-- keyboard control 
+  <node name="key_control" pkg="warehouse_simulation" type="key_control" respawn="false" output="screen"/>
+-->
+<!-- Localization  -->
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="log">
+    <param name="maxRange" value="10"/>
+    <param name="xmin" value="-12"/>
+    <param name="ymin" value="-12"/>
+    <param name="xmax" value="12"/>
+    <param name="ymax" value="12"/>
+    <param name="delta" value="0.05"/>
+    <param name="particles" value="4"/>
+    <param name="temporalUpdate" value="1.0"/>
+    <param name="angularUpdate" value="0.3"/>
+    <param name="linearUpdate" value="0.3"/>
+    <param name="map_update_interval" value="2.0"/>
+  </node>
+
+
+<!-- Navigation -->
+  <node pkg="move_base" type="move_base" respawn="true" name="move_base" output="screen">
+
+    <rosparam file="$(find warehouse_simulation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find warehouse_simulation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find warehouse_simulation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />   
+    <rosparam file="$(find warehouse_simulation)/param/local_costmap_params.yaml" command="load" />   
+    <rosparam file="$(find warehouse_simulation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find warehouse_simulation)/param/base_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find warehouse_simulation)/param/navfn.yaml" command="load" />
+
+    <param name="global_costmap/global_frame" value="map"/>
+    <param name="global_costmap/robot_base_frame" value="base_link"/>
+    <param name="local_costmap/global_frame" value="odom"/>
+    <param name="local_costmap/robot_base_frame" value="base_link"/>
+
+  </node>
+
+
+<!-- rviz-->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find warehouse_simulation)/rviz/navigation.rviz" output="screen"/>
+
+<!-- trajectory display-->
+  <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server" ns="pioneer" >
+    <param name="/target_frame_name" value="map" />
+    <param name="/source_frame_name" value="base_link" />
+    <param name="/trajectory_update_rate" value="10.0" />
+    <param name="/trajectory_publish_rate" value="10.0" />
+  </node>
+
+</launch>
