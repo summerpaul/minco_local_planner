@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:49:26
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 15:02:16
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-24 21:34:00
  */
 #include <stdint.h>
 
@@ -10,7 +10,7 @@
 #define __MATH_H__
 #include <cmath>
 #include <vector>
-namespace minco_local_planner::utils {
+namespace minco_local_planner::basis {
 
 #define EPSION 1E-4
 
@@ -24,7 +24,7 @@ constexpr T RadToDeg(const T &rad) {
 }
 
 template <typename T>
-T NormalizeAngleDeg(const T &deg) {
+T NormalizeAngleDeg(T deg) {
   const T degPi = T(180.0);
   while (deg > degPi) {
     deg -= 2. * degPi;
@@ -36,8 +36,9 @@ T NormalizeAngleDeg(const T &deg) {
 }
 
 template <typename T>
-T NormalizeAngleRad(const T &rad) {
+T NormalizeAngleRad(T rad) {
   const T radPi = T(M_PI);
+
   while (rad > radPi) {
     rad -= 2. * radPi;
   }
@@ -87,9 +88,9 @@ template <typename T>
 inline bool IsEqual(const T &value_1, const T &value_2) {
   if (std::fabs(value_1 - value_2) <= EPSION) {
     return true;
-  } 
+  }
   return false;
 }
 
-}  // namespace minco_local_planner::utils
+}  // namespace minco_local_planner::basis
 #endif /* __MATH_H__ */

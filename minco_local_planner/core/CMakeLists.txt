@@ -12,3 +12,5 @@ include_directories(
 add_subdirectory(config_manager)
 add_subdirectory(module_manager)
 add_subdirectory(runtime_manager)
+add_subdirectory(map_manager)
+add_subdirectory(safety_manager)

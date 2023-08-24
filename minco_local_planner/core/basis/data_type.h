@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:19:40
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 17:39:23
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-24 20:54:30
  */
 #include <stdint.h>
 
@@ -62,6 +62,12 @@ typedef Eigen::Transform<double, 3, Eigen::Affine> Aff3f;
 typedef std::vector<double> Vec_d;
 
 typedef Eigen::Quaterniond Quaterniond;
+
+typedef vec_Vec2d Points2d;
+typedef vec_Vec2d Path2d;
+
+
+
 
 }  // namespace minco_local_planner::basis
 #endif /* __DATA_TYPE_H__ */
