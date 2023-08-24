@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:53:21
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 20:54:01
+ * @Last Modified time: 2023-08-24 23:10:21
  */
 #include <stdint.h>
 
@@ -27,6 +27,7 @@ struct VehiclePose : public Vecd<9> {
   const Vec2d GetPos() const { return (*this).head(2); }
   const Vec2d GetVel() const { return (*this).segment(3, 2); }
   const Vec2d GetAcc() const { return (*this).segment(6, 2); }
+  const Pose2d GetPose2d() const { return (*this).head(3); }
 
   void SetX(const double &x) { (*this)[0] = x; }
   void SetY(const double &y) { (*this)[1] = y; }
@@ -41,6 +42,7 @@ struct VehiclePose : public Vecd<9> {
   void SetPos(const Vec2d &pos) { (*this).head(2) = pos; }
   void SetVel(const Vec2d &vel) { (*this).segment(3, 2) = vel; }
   void SetAcc(const Vec2d &acc) { (*this).segment(6, 2) = acc; }
+  void SetPose2d(const Pose2d &pose) { (*this).head(3) = pose; }
 };
 }  // namespace minco_local_planner::basis
 

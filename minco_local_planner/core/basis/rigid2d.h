@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 22:47:51
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:01:40
+ * @Last Modified time: 2023-08-24 23:53:36
  */
 #include <stdint.h>
 
@@ -24,7 +24,7 @@ struct Twist2D {
       : omega(init_omega), v_x(init_v_x), v_y(init_v_y) {}
 };
 
-typedef Vec3d Pose2d;
+
 
 struct Pose2dStamped {
   Pose2dStamped() : pose(Vec3d::Zero()), timestamp(0.0) {}

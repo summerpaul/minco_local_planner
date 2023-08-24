@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:01:52
+ * @Last Modified time: 2023-08-24 23:52:59
  */
 #include <stdint.h>
 
@@ -41,7 +41,7 @@ class GridMap {
 
   void CreateGridMap(const Pose2d &origin, const Vec2i &dim,
                      const std::vector<int8_t> &data, const double &res) {
-    data_mutex_.lock();
+    mutex_.lock();
     res_ = res;
     res_inv_ = 1 / res;
     origin_ = origin;
@@ -49,13 +49,113 @@ class GridMap {
     data_ = data;
     trans_ = Transform2D(origin_);
     trans_inv_ = trans_.Inv();
-    data_mutex_.unlock();
+    width_ = dim_.x();
+    height_ = dim_.y();
+    data_size_ = data.size();
+    mutex_.unlock();
   }
 
   const double GetRes() const { return res_; }
   const Pose2d GetOrigin() const { return origin_; }
   const Vec2i GetDim() const { return dim_; }
   const std::vector<int8_t> &GetData() const { return data_; }
+  size_t GetIndex(const Vec2i &pn) { return pn(0) + width_ * pn(1); }
+
+  bool IsVerify(const Vec2i &pn) {
+    bool x_ok = pn[0] >= 0 && pn[0] < width_;
+    bool y_ok = pn[1] >= 0 && pn[1] < height_;
+    bool size_ok = GetIndex(pn) < data_size_;
+    return x_ok && y_ok && size_ok;
+  }
+
+  bool IsVerify(const Vec2d &pt) { return IsVerify(DoubleToInt(pt)); }
+
+  bool IsFree(const size_t &idx) {
+    if (idx > data_size_) {
+      return false;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    return data_[idx] == FREE;
+  }
+
+  bool IsFree(const Vec2i &pn) { return IsFree(GetIndex(pn)); }
+
+  bool IsFree(const Vec2d &pt) { return IsFree(DoubleToInt(pt)); }
+
+  bool IsUnknown(const size_t &idx) {
+    if (idx > data_size_) {
+      return false;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    return data_[idx] == UNKNOWM;
+  }
+
+  bool IsUnknown(const Vec2i &pn) { return IsUnknown(GetIndex(pn)); }
+  bool IsUnknown(const Vec2d &pt) { return IsUnknown(DoubleToInt(pt)); }
+
+  bool IsOccupied(const size_t &idx) {
+    if (idx > data_size_) {
+      return false;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    return data_[idx] == OCC;
+  }
+
+  bool IsOccupied(const Vec2i &pn) { return IsOccupied(GetIndex(pn)); }
+  bool IsOccupied(const Vec2d &pt) { return IsOccupied(DoubleToInt(pt)); }
+
+  bool Query(const Vec2i &pn) {
+    if (!IsVerify(pn)) {
+      return false;
+    }
+    return (!IsOccupied(pn));
+  }
+
+  bool Query(const int &x, const int &y, const int range) {
+    // #pragma omp parallel for num_threads(32)
+    for (int i = -range; i < range + 1; i++) {
+      for (int j = -range; j < range + 1; j++) {
+        if (!Query(Vec2d(x + i, y + j))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  bool Query(const Vec2d &pt) { return Query(DoubleToInt(pt)); }
+
+  void SetOccupied(const size_t &index) {
+    if (index > data_size_) {
+      return;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    data_[index] = OCC;
+  }
+
+  void SetOccupied(const Vec2i &pn) {
+    if (!IsVerify(pn)) {
+      return;
+    }
+    const int index = GetIndex(pn);
+    if (index >= static_cast<int>(data_.size())) {
+      std::cout << "error " << std::endl;
+    }
+    SetOccupied(index);
+  }
+
+  void SetInfOccupied(const Vec2d &pt, const double &inf_size = 0.2) {
+    const int inf_step = ceil(inf_size / res_);
+    const Vec2i pn = DoubleToInt(pt);
+    if (inf_size == 0) {
+      SetOccupied(pn);
+    } else if (inf_size > 0) {
+#pragma omp parallel for num_threads(32)
+      for (int x = -inf_step; x < inf_step; ++x)
+        for (int y = -inf_step; y < inf_step; ++y) {
+          SetOccupied(pn + Vec2i(x, y));
+        }
+    }
+  }
 
   Vec2i DoubleToInt(const Vec2d &pt) {
     // 全局坐标系转局部坐标系
@@ -78,7 +178,10 @@ class GridMap {
   double res_;                // 栅格地图的分辨率
   double res_inv_;            // 栅格地图分辨率的倒数
   std::vector<int8_t> data_;  // 一维栅格地图的数据
-  std::mutex data_mutex_;
+  std::mutex mutex_;
+  int width_{0};
+  int height_{0};
+  size_t data_size_{0};
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

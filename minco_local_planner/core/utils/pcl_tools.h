@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:32:15
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 14:46:12
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-24 23:55:09
  */
 #include <stdint.h>
 
@@ -19,6 +19,7 @@
 #include "basis/data_type.h"
 namespace minco_local_planner::utils {
 
+using namespace basis;
 using PointCloud3d = pcl::PointCloud<pcl::PointXYZ>;
 using PointCloud3di = pcl::PointCloud<pcl::PointXYZI>;
 using PointCloud2d = pcl::PointCloud<pcl::PointXY>;
@@ -36,14 +37,14 @@ inline bool LoadPointCloud(const std::string &map_path,
   return true;
 }
 
-inline void GenerateGridMap(PointCloud3d &cloud, Vec2f &origin, Vec2i &dim,
+inline void GenerateGridMap(PointCloud3d &cloud, Vec2d &origin, Vec2i &dim,
                             std::vector<int8_t> &data,
-                            const decimal_t &resolution = 0.05,
-                            const decimal_t &inf_size = 0.3) {
+                            const double &resolution = 0.05,
+                            const double &inf_size = 0.3) {
   double x_min{0}, x_max{0}, y_min{0}, y_max{0}, x{0}, y{0};
   // 得到点云地图最小的点
 
-  const int points_size = cloud.points.size();
+  const size_t points_size = cloud.points.size();
   for (size_t i = 0; i < points_size; i++) {
     if (i == 0) {
       x_min = x_max = cloud.points[i].x;
@@ -65,7 +66,7 @@ inline void GenerateGridMap(PointCloud3d &cloud, Vec2f &origin, Vec2i &dim,
   }
 
   // 得到栅格地图的起点
-  origin = Vec2f(x_min, y_min);
+  origin = Vec2d(x_min, y_min);
   // 得到栅格地图的尺寸
   dim[0] = ceil((x_max - x_min) / resolution);
   dim[1] = ceil((y_max - y_min) / resolution);
@@ -79,8 +80,8 @@ inline void GenerateGridMap(PointCloud3d &cloud, Vec2f &origin, Vec2i &dim,
   if (inf_step == 0) {
 #pragma omp parallel for num_threads(32)
 
-    for (size_t i = 0; i < points_size; i++) {
-      const auto point = cloud.points[i];
+    for (size_t k = 0; k < points_size; k++) {
+      const auto point = cloud.points[k];
       int i = (point.x - x_min) / resolution;
       if (i < 0 || i > dim[0] - 1) continue;
       int j = (point.y - y_min) / resolution;
@@ -91,8 +92,8 @@ inline void GenerateGridMap(PointCloud3d &cloud, Vec2f &origin, Vec2i &dim,
 
   } else {
 #pragma omp parallel for num_threads(32)
-    for (size_t i = 0; i < points_size; i++) {
-      const auto point = cloud.points[i];
+    for (size_t k = 0; k < points_size; k++) {
+      const auto point = cloud.points[k];
       int i = (point.x - x_min) / resolution;
       if (i < 0 || i > dim[0] - 1) continue;
       int j = (point.y - y_min) / resolution;
@@ -107,34 +108,34 @@ inline void GenerateGridMap(PointCloud3d &cloud, Vec2f &origin, Vec2i &dim,
   }
 }
 
-inline void DownSampling(PointCloud3d &cloud, const decimal_t &res = 0.2) {
+inline void downSampling(PointCloud3d &cloud, const double &res = 0.2) {
   PointCloud3d cloud_in = cloud;
 
-  PointCloud3d sor;
+  pcl::VoxelGrid<pcl::PointXYZ> sor;
   sor.setInputCloud(cloud_in.makeShared());
   sor.setLeafSize((float)res, (float)res, (float)res);
   sor.filter(cloud);
 }
 
-inline void TransformPointCloud(PointCloud3d &cloud, const Vec3f &map_to_base,
-                                const Vec3f &base_to_laser) {
-  Aff3f map_to_base_tf = Aff3f::Identity();
+inline void TransformPointCloud(PointCloud3d &cloud, const Pose2d &map_to_base,
+                                const Pose2d &base_to_laser) {
+  Aff3d map_to_base_tf = Aff3d::Identity();
   PointCloud3d cloud_out;
   map_to_base_tf.translation() << map_to_base[0], map_to_base[1], 0;
   map_to_base_tf.rotate(
       Eigen::AngleAxisd(map_to_base[2], Eigen::Vector3d::UnitZ()));
-  Aff3f base_to_laser_tf = Aff3f::Identity();
+  Aff3d base_to_laser_tf = Aff3d::Identity();
   base_to_laser_tf.translation() << base_to_laser[0], base_to_laser[1], 0;
   base_to_laser_tf.rotate(
       Eigen::AngleAxisd(base_to_laser[2], Eigen::Vector3d::UnitZ()));
-  Aff3f map_to_laser_tf = map_to_base_tf * base_to_laser_tf;
+  Aff3d map_to_laser_tf = map_to_base_tf * base_to_laser_tf;
 
   pcl::transformPointCloud(cloud, cloud_out, map_to_laser_tf);
   cloud = cloud_out;
 }
 
-inline void TransformPointCloud(PointCloud3d &cloud, const Vec3f &pose) {
-  Aff3f transform = Aff3f::Identity();
+inline void TransformPointCloud(PointCloud3d &cloud, const Pose2d &pose) {
+  Aff3d transform = Aff3d::Identity();
   PointCloud3d cloud_out;
   transform.translation() << pose[0], pose[1], 0;
   transform.rotate(Eigen::AngleAxisd(pose[2], Eigen::Vector3d::UnitZ()));
@@ -142,17 +143,17 @@ inline void TransformPointCloud(PointCloud3d &cloud, const Vec3f &pose) {
   cloud = cloud_out;
 }
 
-inline void TransformPointCloud(const PointCloud3d &cloud_in, const Vec3f &pose,
-                                PointCloud3d &cloud_out) {
-  Aff3f transform = Aff3f::Identity();
+inline void TransformPointCloud(const PointCloud3d &cloud_in,
+                                const Pose2d &pose, PointCloud3d &cloud_out) {
+  Aff3d transform = Aff3d::Identity();
   transform.translation() << pose[0], pose[1], 0;
   transform.rotate(Eigen::AngleAxisd(pose[2], Eigen::Vector3d::UnitZ()));
   pcl::transformPointCloud(cloud_in, cloud_out, transform);
 }
 
-inline void TransformPointCloud(const PointCloud3d &cloud_in, const Vec3f &dir,
+inline void TransformPointCloud(const PointCloud3d &cloud_in, const Pose2d &dir,
                                 const double &angle, PointCloud3d &cloud_out) {
-  Aff3f transform = Aff3f::Identity();
+  Aff3d transform = Aff3d::Identity();
   transform.rotate(Eigen::AngleAxisd(angle, dir));
   pcl::transformPointCloud(cloud_in, cloud_out, transform);
 }

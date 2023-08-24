@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:19:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 20:54:30
+ * @Last Modified time: 2023-08-24 23:42:44
  */
 #include <stdint.h>
 
@@ -53,11 +53,11 @@ typedef Matd<6, 6> Mat6d;
 
 typedef Matd<4, 2> Mat4x2d;
 
-typedef Matd<Eigen::Dynamic, Eigen::Dynamic> MatDf;
+typedef Matd<Eigen::Dynamic, Eigen::Dynamic> MatDd;
 
-typedef Eigen::Transform<double, 2, Eigen::Affine> Aff2f;
+typedef Eigen::Transform<double, 2, Eigen::Affine> Aff2d;
 
-typedef Eigen::Transform<double, 3, Eigen::Affine> Aff3f;
+typedef Eigen::Transform<double, 3, Eigen::Affine> Aff3d;
 
 typedef std::vector<double> Vec_d;
 
@@ -65,9 +65,7 @@ typedef Eigen::Quaterniond Quaterniond;
 
 typedef vec_Vec2d Points2d;
 typedef vec_Vec2d Path2d;
-
-
-
+typedef Vec3d Pose2d;
 
 }  // namespace minco_local_planner::basis
 #endif /* __DATA_TYPE_H__ */
