@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:54:13
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 20:54:35
+ * @Last Modified time: 2023-08-24 23:10:44
  */
 #include <stdint.h>
 
@@ -20,6 +20,7 @@ struct TrajectoryPoint : public Vec6d {
   const double getS() const { return (*this)[4]; }
   const double getVel() const { return (*this)[5]; }
   const Vec2d getPos() const { return (*this).head(2); }
+  const Pose2d GetPose2d() const { return (*this).head(3); }
 
   void SetX(const double &x) { (*this)[0] = x; }
   void SetY(const double &y) { (*this)[1] = y; }
@@ -28,6 +29,7 @@ struct TrajectoryPoint : public Vec6d {
   void SetS(const double &s) { (*this)[4] = s; }
   void SetVel(const double &vel) { (*this)[5] = vel; }
   void SetPos(const Vec2d &pos) { (*this).head(2) = pos; }
+  void SetPose2d(const Pose2d &pose) { (*this).head(3) = pose; }
 };
 }  // namespace minco_local_planner::basis
 
