@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 16:37:02
+ * @Last Modified time: 2023-08-25 13:34:56
  */
 #include <stdint.h>
 
@@ -34,13 +34,18 @@ class ConfigManager : public BaseModule {
 
  public:
   const LogConfig& GetLogConfig() const { return log_cfg_; }
+  const RuntimeMangerConfig& GetRuntimeMangerConfig() const {
+    return runtime_manager_cfg;
+  }
 
  private:
   bool ParseLogConfig(const Json::Value& log_cfg_json);
+  bool ParseRuntimeMangerConfig(const Json::Value& runtime_manager_cfg_json);
 
  private:
   std::string config_file_path_;
   LogConfig log_cfg_;
+  RuntimeMangerConfig runtime_manager_cfg;
 };
 }  // namespace minco_local_planner::config_manager
 

@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:43
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 16:43:35
+ * @Last Modified time: 2023-08-25 11:08:02
  */
 #include "config_manager.h"
 
@@ -12,7 +12,7 @@
 namespace minco_local_planner::config_manager {
 
 ConfigManager::ConfigManager(const std::string& path)
-    : config_file_path_(path), BaseModule("config_manager") {}
+    : BaseModule("config_manager"), config_file_path_(path) {}
 
 bool ConfigManager::Init() {
   std::ifstream ifs(config_file_path_.data());  // open file example.json
@@ -24,6 +24,7 @@ bool ConfigManager::Init() {
   }
 
   bool flag = ParseLogConfig(json_cfg["log_cfg"]);
+  flag = ParseRuntimeMangerConfig(json_cfg["runtime_manager_cfg"]);
 
   return flag;
 }
@@ -53,6 +54,28 @@ bool ConfigManager::ParseLogConfig(const Json::Value& log_cfg_json) {
     return false;
   }
   log_cfg_.log_type = log_cfg_json["log_type"].asInt();
+  return true;
+}
+
+bool ConfigManager::ParseRuntimeMangerConfig(
+    const Json::Value& runtime_manager_cfg_json) {
+  if (runtime_manager_cfg_json.type() == Json::nullValue) {
+    std::cout << "miss runtime manager config all " << std::endl;
+    return false;
+  }
+  if (runtime_manager_cfg_json["check_sleep_time"].type() == Json::nullValue) {
+    std::cout << "miss runtime manager check_sleep_time  " << std::endl;
+    return false;
+  }
+  runtime_manager_cfg.check_sleep_time =
+      runtime_manager_cfg_json["check_sleep_time"].asDouble();
+
+  if (runtime_manager_cfg_json["message_wait_time"].type() == Json::nullValue) {
+    std::cout << "miss runtime manager message_wait_time  " << std::endl;
+    return false;
+  }
+  runtime_manager_cfg.message_wait_time =
+      runtime_manager_cfg_json["message_wait_time"].asDouble();
   return true;
 }
 }  // namespace minco_local_planner::config_manager

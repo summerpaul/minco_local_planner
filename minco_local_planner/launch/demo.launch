@@ -1,0 +1,6 @@
+<launch>
+
+    <arg name="config_file" default="$(find minco_local_planner)/config/local_planner.json"/>
+    <node name="minco_local_planner" pkg="minco_local_planner" type="demo_node" output="screen"  args="$(arg config_file)" >
+    </node>
+</launch>

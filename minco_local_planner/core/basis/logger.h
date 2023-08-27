@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 13:12:53
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-24 17:28:01
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-27 21:34:32
  */
 #include <stdint.h>
 
@@ -70,7 +70,7 @@ class Logger {
     }
 
     const auto spd_log_level = spdlog::level::level_enum(log_level);
-    const std::string pattern = "%Y-%m-%d %H:%M:%S [%l] [%s %#] %v";
+    const std::string pattern = "%Y-%m-%d %H:%M:%S.%e [%l] [%s %#] %v";
 
     try {
       int date = NowDateToInt();

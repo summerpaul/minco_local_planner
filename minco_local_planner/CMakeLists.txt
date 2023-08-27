@@ -46,3 +46,4 @@ ${PCL_INCLUDE_DIRS}
 )
 
 add_subdirectory(core)
+add_subdirectory(app)
