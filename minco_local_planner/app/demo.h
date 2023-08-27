@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:15
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-25 10:10:17
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-27 22:23:00
  */
 #include <stdint.h>
 
@@ -16,6 +16,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <std_msgs/Empty.h>
 
+#include "visualizer/visualizer.h"
 class Demo {
  public:
   explicit Demo(const std::string config_file_path);
@@ -37,6 +38,16 @@ class Demo {
   ros::NodeHandle nh_, pnh_;
 
   std::string config_file_path_;
+
+  ros::Subscriber odom_sub_;        // 定位车辆的实时位置
+  ros::Subscriber laser_scan_sub_;  // 定位激光雷达
+  ros::Subscriber goals_pose_sub_;  // 订阅多目标点，生成Bezier曲线段
+  ros::Subscriber goal_pose_sub_;   // 目标点订阅
+  ros::Subscriber cancel_sub_;
+  ros::Publisher cmd_pub_;
+  ros::Timer vis_timer_;
+
+  visualizer::Visualizer visualizer_;
 };
 
 #endif /* __DEMO_H__ */

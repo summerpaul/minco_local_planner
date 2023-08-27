@@ -1,16 +1,16 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-25 11:02:04
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-27 23:14:48
  */
 #include <stdint.h>
 
 #ifndef __CONFIG_DATA_H__
 #define __CONFIG_DATA_H__
 #include <string>
-namespace minco_local_planner::config_manager {
 
+namespace minco_local_planner::config_manager {
 struct LogConfig {
   std::string log_path = "/root/log";
   int log_type = 0;
@@ -22,6 +22,39 @@ struct RuntimeMangerConfig {
   double check_sleep_time = 0.1;
   //   数据异常的时间间隔
   double message_wait_time = 0.5;
+};
+
+struct MapManagerConfig {
+  // 点云地图的地址
+  std::string pcd_map_path = "/root/locate/laser_kc.pcd";
+  // 接受点云数据的时间间隔，如果时间间隔过长，人为数据异常单位s
+  double map_generate_time{0.1};
+  // 点云数据降采样分辨率 单位m
+  double down_sampling_res{0.05};
+  // 栅格地图的分辨率 单位m
+  double grid_map_res{0.05};
+  // 栅格地图的膨胀半径 单位m
+  double grid_map_inf_size{0.2};
+  // 实时点云后，障碍物强厚度单位m
+  double raycast_dis{0.5};
+  // 增加点的距离分辨率 单位m
+  double raycast_res{0.1};
+  // 激光雷达的范围 单位m
+  double laser_range{5.0};
+  // ESDFmap的分辨率
+  double esdf_map_res{0.1};
+  // 激光雷达与车体坐标系的相对坐标
+  double base_to_laser_x;
+  double base_to_laser_y;
+  double base_to_laser_yaw;
+  // esdf地图的宽 单位 m
+  double grid_map_width{10.0};
+  // esdf地图的高 单位m
+  double grid_map_height{10.0};
+
+  double esdf_map_width{5.0};
+  double esdf_map_height{5.0};
+  bool use_global_map{false};
 };
 
 }  // namespace minco_local_planner::config_manager

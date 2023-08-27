@@ -34,7 +34,7 @@ catkin_package(
 )
 
 include_directories(
-# include
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -47,3 +47,4 @@ ${PCL_INCLUDE_DIRS}
 
 add_subdirectory(core)
 add_subdirectory(app)
+add_subdirectory(visualizer)

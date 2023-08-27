@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:51
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 21:21:09
+ * @Last Modified time: 2023-08-27 22:51:30
  */
 #include "runtime_manager.h"
 
@@ -25,6 +25,10 @@ bool RuntimeManager::Init() {
              ->GetConfigManager()
              ->GetRuntimeMangerConfig();
   status_ = RuntimeStatus::MISS_ALL;
+
+  scan_active_.store(false);
+  pose_active_.store(false);
+  twist_active_.store(false);
   return true;
 }
 
@@ -68,5 +72,41 @@ void RuntimeManager::UpdateTwist(const Twist2D& twist) {
   twist_t_ = GetTimeNowDouble();
 }
 
-void RuntimeManager::CheckRuntimeTimer() { LOG_INFO("in CheckRuntimeTimer"); }
+void RuntimeManager::CheckRuntimeTimer() {
+  const auto cur_t = GetTimeNowDouble();
+  const auto vehicle_dt = cur_t - pose_t_;
+  const auto laser_dt = cur_t - scan_t_;
+  const bool miss_pose =
+      (vehicle_dt > cfg_.message_wait_time && !pose_active_.load());
+  const bool miss_scan =
+      (laser_dt > cfg_.message_wait_time && !scan_active_.load());
+  if (miss_pose && miss_scan) {
+    if (status_ != RuntimeStatus::MISS_ALL) {
+      ChangeStatus(RuntimeStatus::MISS_ALL);
+    }
+  } else if (miss_pose && !miss_scan) {
+    if (status_ != RuntimeStatus::MISS_POSE) {
+      ChangeStatus(RuntimeStatus::MISS_POSE);
+    }
+  } else if (!miss_pose && miss_scan) {
+    if (status_ != RuntimeStatus::MISS_SCAN) {
+      ChangeStatus(RuntimeStatus::MISS_SCAN);
+    }
+  } else if (!miss_pose && !miss_scan) {
+    if (status_ != RuntimeStatus::NORMAL) {
+      ChangeStatus(RuntimeStatus::NORMAL);
+    }
+  }
+}
+
+void RuntimeManager::ChangeStatus(const RuntimeStatus& new_status) {
+  const static std::string status_str[4] = {"NORMAL", "MISS_POSE", "MISS_SCAN",
+                                            "MISS_ALL"};
+
+  int pre_s = int(status_);
+  status_ = new_status;
+
+  LOG_INFO("Runtime state form {} to {}", status_str[pre_s],
+           status_str[int(new_status)]);
+}
 }  // namespace minco_local_planner::runtime_manager

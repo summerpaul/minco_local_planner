@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:46:03
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 21:32:48
+ * @Last Modified time: 2023-08-27 23:08:18
  */
 #include "module_manager.h"
 
@@ -43,12 +43,19 @@ bool ModuleManager::Init(const std::string& config_file_path) {
         ChangeInitStep(InitStep::Init_RuntimeManager);
       } break;
       case InitStep::Init_RuntimeManager: {
-        runtime_manager_ptr.reset(new RuntimeManager());
+        runtime_manager_ptr.reset(new RuntimeManager);
 
         init_flag = runtime_manager_ptr->Run();
-        init_flag ? ChangeInitStep(InitStep::Init_Done)
+        init_flag ? ChangeInitStep(InitStep::Init_MapManager)
                   : ChangeInitStep(InitStep::Init_Failed);
       } break;
+
+      case InitStep::Init_MapManager: {
+        map_manager_ptr_.reset(new MapManager);
+        init_flag = map_manager_ptr_->Run();
+        init_flag ? ChangeInitStep(InitStep::Init_Done)
+                  : ChangeInitStep(InitStep::Init_Failed);
+      }
     }
   }
   return init_flag;

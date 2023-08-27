@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:45:56
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 21:32:29
+ * @Last Modified time: 2023-08-27 23:07:16
  */
 #include <stdint.h>
 
@@ -11,14 +11,16 @@
 
 #include "basis/logger.h"
 #include "config_manager/config_manager.h"
+#include "map_manager/map_manager.h"
 #include "runtime_manager/runtime_manager.h"
+#include "utils/singleton.h"
 #include "utils/timer_manager.h"
 #include "utils/timer_thread.h"
-#include "utils/singleton.h"
 namespace minco_local_planner::module_manager {
 using namespace basis;
 using namespace config_manager;
 using namespace runtime_manager;
+using namespace map_manager;
 using namespace utils;
 
 enum class InitStep {
@@ -50,6 +52,8 @@ class ModuleManager {
     return runtime_manager_ptr;
   }
 
+  const MapManager::Ptr GetMapManager() const { return map_manager_ptr_; }
+
  private:
   ModuleManager() = default;
   ~ModuleManager();
@@ -63,6 +67,8 @@ class ModuleManager {
   InitStep init_step_;
   ConfigManager::Ptr config_manager_ptr_;
   RuntimeManager::Ptr runtime_manager_ptr;
+  MapManager::Ptr map_manager_ptr_;
+
   std::unique_ptr<TimerThread> timer_thread_;
 };
 

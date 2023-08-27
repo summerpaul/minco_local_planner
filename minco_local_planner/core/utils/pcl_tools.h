@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:32:15
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:55:09
+ * @Last Modified time: 2023-08-27 22:54:36
  */
 #include <stdint.h>
 
@@ -13,16 +13,12 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/pcl_config.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
 
 #include "basis/data_type.h"
+#include "basis/pcl_types.h"
 namespace minco_local_planner::utils {
 
 using namespace basis;
-using PointCloud3d = pcl::PointCloud<pcl::PointXYZ>;
-using PointCloud3di = pcl::PointCloud<pcl::PointXYZI>;
-using PointCloud2d = pcl::PointCloud<pcl::PointXY>;
 
 inline bool LoadPointCloud(const std::string &map_path,
                            PointCloud3d &cloud_out) {

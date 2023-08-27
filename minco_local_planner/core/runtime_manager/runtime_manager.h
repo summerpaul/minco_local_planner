@@ -2,12 +2,14 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:47
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 21:25:40
+ * @Last Modified time: 2023-08-27 22:41:45
  */
 #include <stdint.h>
 
 #ifndef __RUNTIME_MANAGER_H__
 #define __RUNTIME_MANAGER_H__
+
+#include <atomic>
 
 #include "basis/base_module.h"
 #include "basis/data_type.h"
@@ -18,7 +20,7 @@
 #include "config_manager/config_data.h"
 namespace minco_local_planner::runtime_manager {
 
-enum class RuntimeStatus { NORMAL, MISS_POSE, MISS_SCAN, MISS_TWIST, MISS_ALL };
+enum class RuntimeStatus { NORMAL, MISS_POSE, MISS_SCAN, MISS_ALL };
 
 using namespace basis;
 class RuntimeManager : public BaseModule {
@@ -50,6 +52,7 @@ class RuntimeManager : public BaseModule {
 
  private:
   void CheckRuntimeTimer();
+  void ChangeStatus(const RuntimeStatus& new_status);
 
  private:
   std::mutex pose_mtx_, scan_mtx_, twist_mtx_;
@@ -59,6 +62,7 @@ class RuntimeManager : public BaseModule {
   Twist2D cur_twist_;
   RuntimeStatus status_;
   config_manager::RuntimeMangerConfig cfg_;
+  std::atomic<bool> scan_active_, pose_active_, twist_active_;
 };
 }  // namespace minco_local_planner::runtime_manager
 
