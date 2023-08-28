@@ -2,12 +2,13 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 10:34:56
+ * @Last Modified time: 2023-08-28 22:20:24
  */
 #include "map_manager.h"
 
 #include <iostream>
 
+#include "basis/time.h"
 #include "module_manager/module_manager.h"
 #include "utils/singleton.h"
 #include "utils/timer_manager.h"
@@ -28,9 +29,6 @@ bool MapManager::Init() {
 }
 bool MapManager::Start() {
   Singleton<TimerManager>()->Schedule(
-      100, std::bind(&MapManager::LaserScanTransformTimer, this));
-
-  Singleton<TimerManager>()->Schedule(
       100, std::bind(&MapManager::GenerateGridMapTimer, this));
   return true;
 }
@@ -41,20 +39,19 @@ void MapManager::GenerateInitGridMap() {
 
   const double res = cfg_.grid_map_res;
 
-  const double res_inv = 1 / cfg_.grid_map_res;
-
-  const int width = std::ceil(cfg_.grid_map_width * res_inv);
-
-  const int height = std::ceil(cfg_.grid_map_height * res_inv);
+  res_inv_ = 1 / cfg_.grid_map_res;
+  width_ = std::ceil(cfg_.grid_map_width * res_inv_);
+  height_ = std::ceil(cfg_.grid_map_height * res_inv_);
   std::vector<int8_t> data;
-  const int data_size = width * height;
+  const int data_size = width_ * height_;
 
   data.resize(data_size);
   data.assign(data_size, FREE);
+  map_offset_ = -0.5 * Pose2d(cfg_.grid_map_width, cfg_.grid_map_height, 0);
 
   Pose2d origin;
 
-  const Vec2i dim(width, height);
+  const Vec2i dim(width_, height_);
 
   grid_map_ptr_->CreateGridMap(origin, dim, data, res);
 }
@@ -83,17 +80,31 @@ void MapManager::raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud) {
   cloud.height = 1;
 }
 
-void MapManager::LaserScanTransformTimer() {
-  LOG_INFO("in LaserScanTransformTimer");
-
-  LaserScan scan =
+void MapManager::GenerateGridMapTimer() {
+  // 获取原始的lasercan数据
+  const LaserScan scan =
       ModuleManager::GetInstance()->GetRuntimeManager()->GetLaserScan();
   PointCloud3d local_point_cloud;
+
   raycast(scan, local_point_cloud);
   TransformPointCloud(local_point_cloud, base_to_laser_,
                       transformed_pointcloud_);
-}
+  const VehiclePose pose =
+      ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
 
-void MapManager::GenerateGridMapTimer() { LOG_INFO("in GenerateGridMapTimer"); }
+  const size_t points_size = transformed_pointcloud_.points.size();
+  // 重置栅格地图数据
+  grid_map_ptr_->SetDataZero();
+  //
+  grid_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
+
+  for (size_t i = 0; i < points_size; ++i) {
+    const int x = std::ceil(transformed_pointcloud_.points[i].x * res_inv_) +
+                  std::ceil(0.5 * width_);
+    const int y = std::ceil(transformed_pointcloud_.points[i].y * res_inv_) +
+                  std::ceil(0.5 * height_);
+    grid_map_ptr_->SetOccupied(Vec2i(x, y));
+  }
+}
 
 }  // namespace minco_local_planner::map_manager

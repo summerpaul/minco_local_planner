@@ -117,11 +117,77 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        back_sonar:
+          Value: true
+        base_link:
+          Value: true
+        center_hubcap:
+          Value: true
+        center_wheel:
+          Value: true
+        front_sonar:
+          Value: true
+        imu_link:
+          Value: true
+        laser:
+          Value: true
+        odom:
+          Value: true
+        p3dx_left_hubcap:
+          Value: true
+        p3dx_left_wheel:
+          Value: true
+        p3dx_right_hubcap:
+          Value: true
+        p3dx_right_wheel:
+          Value: true
+        swivel:
+          Value: true
+        top_plate:
+          Value: true
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        odom:
+          base_link:
+            back_sonar:
+              {}
+            front_sonar:
+              {}
+            imu_link:
+              {}
+            laser:
+              {}
+            p3dx_left_wheel:
+              p3dx_left_hubcap:
+                {}
+            p3dx_right_wheel:
+              p3dx_right_hubcap:
+                {}
+            swivel:
+              center_wheel:
+                center_hubcap:
+                  {}
+            top_plate:
+              {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_link
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -145,7 +211,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.394196510314941
+      Distance: 19.500883102416992
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -153,17 +219,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.24978339672088623
-        Y: 1.2028586864471436
-        Z: 0.4128239154815674
+        X: 4.424328327178955
+        Y: 3.8056228160858154
+        Z: 2.0319879055023193
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.114796757698059
+      Pitch: 1.2197966575622559
       Target Frame: <Fixed Frame>
-      Yaw: 4.618561744689941
+      Yaw: 4.578549385070801
     Saved: ~
 Window Geometry:
   Displays:

@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 22:47:51
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:53:36
+ * @Last Modified time: 2023-08-28 21:39:48
  */
 #include <stdint.h>
 
@@ -23,8 +23,6 @@ struct Twist2D {
           const double &init_v_y)
       : omega(init_omega), v_x(init_v_x), v_y(init_v_y) {}
 };
-
-
 
 struct Pose2dStamped {
   Pose2dStamped() : pose(Vec3d::Zero()), timestamp(0.0) {}
@@ -126,6 +124,20 @@ inline Pose2d SubPose2d(const Pose2d &origin, const Pose2d &pose) {
   ret[1] = -(pose[0] - origin[0]) * sin_ + (pose[1] - origin[1]) * cos_;
   ret[2] = NormalizeAngleRad(pose[2] - origin[2]);
   return ret;
+}
+
+inline Eigen::Quaterniond GetQuaterion(const Pose2d &p) {
+  double sy = std::sin(p[2] * 0.5);
+  double cy = std::cos(p[2] * 0.5);
+  double sp = 0.;
+  double cp = 1.;
+  double sr = 0.;
+  double cr = 1.;
+  double w = cr * cp * cy + sr * sp * sy;
+  double x = sr * cp * cy - cr * sp * sy;
+  double y = cr * sp * cy + sr * cp * sy;
+  double z = cr * cp * sy - sr * sp * cy;
+  return Eigen::Quaterniond(w, x, y, z);
 }
 
 }  // namespace minco_local_planner::basis

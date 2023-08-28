@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 10:33:57
+ * @Last Modified time: 2023-08-28 21:29:57
  */
 #include "demo.h"
 
@@ -83,7 +83,7 @@ void Demo::VisTimer() {
   const auto gird_map =
       ModuleManager::GetInstance()->GetMapManager()->GetGridMap();
   visualizer_.GridMapVis(gird_map->GetOrigin(), gird_map->GetDim(),
-                         gird_map->GetData(), gird_map->GetRes(), "base_link");
+                         gird_map->GetData(), gird_map->GetRes());
 
   const PointCloud3d transformed_pcd =
       ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();

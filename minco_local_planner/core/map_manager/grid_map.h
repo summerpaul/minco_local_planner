@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 00:13:24
+ * @Last Modified time: 2023-08-28 21:25:37
  */
 #include <stdint.h>
 
@@ -61,6 +61,9 @@ class GridMap {
   const Vec2i GetDim() const { return dim_; }
   const std::vector<int8_t> &GetData() const { return data_; }
   size_t GetIndex(const Vec2i &pn) { return pn(0) + width_ * pn(1); }
+
+  void SetDataZero() { data_.assign(data_size_, FREE); }
+  void SetOrigin(const Pose2d &origin) { origin_ = origin; }
 
   bool IsVerify(const Vec2i &pn) {
     bool x_ok = pn[0] >= 0 && pn[0] < width_;

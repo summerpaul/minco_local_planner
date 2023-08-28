@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:28
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 10:29:59
+ * @Last Modified time: 2023-08-28 22:20:37
  */
 #include <stdint.h>
 
@@ -15,6 +15,7 @@
 
 #include "basis/data_type.h"
 #include "basis/pcl_types.h"
+#include "basis/rigid2d.h"
 #include "vis_tools.h"
 namespace visualizer {
 
@@ -25,7 +26,7 @@ class Visualizer {
 
   void GridMapVis(const Pose2d &origin, const Vec2i &dim,
                   const std::vector<int8_t> &data, const double &res,
-                  const std::string &frame_id = "base_link");
+                  const std::string &frame_id = "odom");
   void TransformedPcdVis(const PointCloud3d &cloud,
                          const std::string frame_id = "base_link");
 

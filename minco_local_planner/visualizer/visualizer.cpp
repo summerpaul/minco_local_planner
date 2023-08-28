@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 10:37:32
+ * @Last Modified time: 2023-08-28 21:41:34
  */
 #include "visualizer.h"
 
@@ -25,7 +25,12 @@ void Visualizer::GridMapVis(const Pose2d &origin, const Vec2i &dim,
   geometry_msgs::Pose pose;
   pose.position.x = origin.x();
   pose.position.y = origin.y();
-  pose.orientation.w = 1;
+  const auto oritation = GetQuaterion(origin);
+  pose.orientation.w = oritation.w();
+  pose.orientation.x = oritation.x();
+  pose.orientation.y = oritation.y();
+  pose.orientation.z = oritation.z();
+
   grid_map_ros.info.map_load_time = ros::Time::now();
   grid_map_ros.header.stamp = ros::Time::now();
   grid_map_ros.data = data;

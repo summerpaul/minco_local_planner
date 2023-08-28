@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:19
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 10:38:32
+ * @Last Modified time: 2023-08-28 22:19:17
  */
 #include <stdint.h>
 
@@ -40,8 +40,6 @@ class MapManager : public BaseModule {
   }
 
  private:
-  void LaserScanTransformTimer();
-
   void GenerateGridMapTimer();
 
   void GenerateInitGridMap();
@@ -55,6 +53,11 @@ class MapManager : public BaseModule {
   std::mutex transformed_pointcloud_mutex_;
   PointCloud3d transformed_pointcloud_;  // 使用外参标定后的点云地图，用于停障
   Pose2d base_to_laser_;
+  Pose2d map_offset_;
+  double res_inv_;
+  int width_;
+  int height_;
+
 };
 
 }  // namespace minco_local_planner::map_manager
