@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-25 13:34:56
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-28 00:08:37
  */
 #include <stdint.h>
 
@@ -35,7 +35,11 @@ class ConfigManager : public BaseModule {
  public:
   const LogConfig& GetLogConfig() const { return log_cfg_; }
   const RuntimeMangerConfig& GetRuntimeMangerConfig() const {
-    return runtime_manager_cfg;
+    return runtime_manager_cfg_;
+  }
+
+  const MapManagerConfig& GetMapManagerConfig() const {
+    return map_manager_cfg_;
   }
 
  private:
@@ -45,7 +49,8 @@ class ConfigManager : public BaseModule {
  private:
   std::string config_file_path_;
   LogConfig log_cfg_;
-  RuntimeMangerConfig runtime_manager_cfg;
+  RuntimeMangerConfig runtime_manager_cfg_;
+  MapManagerConfig map_manager_cfg_;
 };
 }  // namespace minco_local_planner::config_manager
 

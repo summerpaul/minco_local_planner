@@ -67,14 +67,14 @@ bool ConfigManager::ParseRuntimeMangerConfig(
     std::cout << "miss runtime manager check_sleep_time  " << std::endl;
     return false;
   }
-  runtime_manager_cfg.check_sleep_time =
+  runtime_manager_cfg_.check_sleep_time =
       runtime_manager_cfg_json["check_sleep_time"].asDouble();
 
   if (runtime_manager_cfg_json["message_wait_time"].type() == Json::nullValue) {
     std::cout << "miss runtime manager message_wait_time  " << std::endl;
     return false;
   }
-  runtime_manager_cfg.message_wait_time =
+  runtime_manager_cfg_.message_wait_time =
       runtime_manager_cfg_json["message_wait_time"].asDouble();
   return true;
 }

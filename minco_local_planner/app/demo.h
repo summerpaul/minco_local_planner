@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:15
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 22:23:00
+ * @Last Modified time: 2023-08-28 00:38:57
  */
 #include <stdint.h>
 
@@ -33,6 +33,9 @@ class Demo {
 
   void GoalsCallback(const geometry_msgs::PoseArray::ConstPtr &msg);
   void GoalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
+
+  void VisTimer();
+
 
  private:
   ros::NodeHandle nh_, pnh_;

@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 22:49:56
+ * @Last Modified time: 2023-08-28 10:33:57
  */
 #include "demo.h"
 
@@ -34,6 +34,8 @@ void Demo::InitRos() {
   goal_pose_sub_ =
       nh_.subscribe("/move_base_simple/goal", 50, &Demo::GoalCallback, this);
   cmd_pub_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+
+  Singleton<TimerManager>()->Schedule(100, std::bind(&Demo::VisTimer, this));
 }
 
 bool Demo::InitPlanner() {
@@ -75,3 +77,15 @@ void Demo::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
 
 void Demo::GoalsCallback(const geometry_msgs::PoseArray::ConstPtr &msg) {}
 void Demo::GoalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg) {}
+
+void Demo::VisTimer() {
+  // 显示栅格地图
+  const auto gird_map =
+      ModuleManager::GetInstance()->GetMapManager()->GetGridMap();
+  visualizer_.GridMapVis(gird_map->GetOrigin(), gird_map->GetDim(),
+                         gird_map->GetData(), gird_map->GetRes(), "base_link");
+
+  const PointCloud3d transformed_pcd =
+      ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();
+  visualizer_.TransformedPcdVis(transformed_pcd);
+}

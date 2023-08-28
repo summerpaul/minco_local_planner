@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:52:59
+ * @Last Modified time: 2023-08-28 00:13:24
  */
 #include <stdint.h>
 
@@ -32,6 +32,7 @@ class GridMap {
   GridMap &operator=(const GridMap &) = default;
   GridMap(GridMap &&) = default;
   GridMap &operator=(GridMap &&) = default;
+  GridMap() = default;
   virtual ~GridMap() = default;
 
   GridMap(const Pose2d &origin, const Vec2i &dim,
