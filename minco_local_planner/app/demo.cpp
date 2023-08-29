@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 21:29:57
+ * @Last Modified time: 2023-08-29 19:00:01
  */
 #include "demo.h"
 
@@ -88,4 +88,7 @@ void Demo::VisTimer() {
   const PointCloud3d transformed_pcd =
       ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();
   visualizer_.TransformedPcdVis(transformed_pcd);
+
+  visualizer_.SafetyBoundingBoxesVis(
+      ModuleManager::GetInstance()->GetSafetyManager()->GetBoundingBoxs());
 }

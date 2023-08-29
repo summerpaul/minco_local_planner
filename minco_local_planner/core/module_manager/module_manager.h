@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:45:56
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 23:07:16
+ * @Last Modified time: 2023-08-29 20:11:37
  */
 #include <stdint.h>
 
@@ -13,6 +13,7 @@
 #include "config_manager/config_manager.h"
 #include "map_manager/map_manager.h"
 #include "runtime_manager/runtime_manager.h"
+#include "safety_manager/safety_manager.h"
 #include "utils/singleton.h"
 #include "utils/timer_manager.h"
 #include "utils/timer_thread.h"
@@ -21,10 +22,11 @@ using namespace basis;
 using namespace config_manager;
 using namespace runtime_manager;
 using namespace map_manager;
+using namespace safety_manager;
 using namespace utils;
 
 enum class InitStep {
-  Init_ConfigManager,   // 初始化配置文件
+  Init_ConfigManager=0,   // 初始化配置文件
   Init_Log,             // 初始化日志
   Init_RuntimeManager,  // 初始化实时数据管理
   Init_MapManager,      // 初始化地图管理
@@ -49,10 +51,14 @@ class ModuleManager {
   }
 
   const RuntimeManager::Ptr GetRuntimeManager() const {
-    return runtime_manager_ptr;
+    return runtime_manager_ptr_;
   }
 
   const MapManager::Ptr GetMapManager() const { return map_manager_ptr_; }
+
+  const SafetyManager::Ptr GetSafetyManager() const {
+    return safety_manager_ptr_;
+  }
 
  private:
   ModuleManager() = default;
@@ -66,8 +72,9 @@ class ModuleManager {
  private:
   InitStep init_step_;
   ConfigManager::Ptr config_manager_ptr_;
-  RuntimeManager::Ptr runtime_manager_ptr;
+  RuntimeManager::Ptr runtime_manager_ptr_;
   MapManager::Ptr map_manager_ptr_;
+  SafetyManager::Ptr safety_manager_ptr_;
 
   std::unique_ptr<TimerThread> timer_thread_;
 };

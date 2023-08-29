@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:46:03
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 23:08:18
+ * @Last Modified time: 2023-08-29 19:55:43
  */
 #include "module_manager.h"
 
@@ -43,9 +43,9 @@ bool ModuleManager::Init(const std::string& config_file_path) {
         ChangeInitStep(InitStep::Init_RuntimeManager);
       } break;
       case InitStep::Init_RuntimeManager: {
-        runtime_manager_ptr.reset(new RuntimeManager);
+        runtime_manager_ptr_.reset(new RuntimeManager);
 
-        init_flag = runtime_manager_ptr->Run();
+        init_flag = runtime_manager_ptr_->Run();
         init_flag ? ChangeInitStep(InitStep::Init_MapManager)
                   : ChangeInitStep(InitStep::Init_Failed);
       } break;
@@ -53,8 +53,22 @@ bool ModuleManager::Init(const std::string& config_file_path) {
       case InitStep::Init_MapManager: {
         map_manager_ptr_.reset(new MapManager);
         init_flag = map_manager_ptr_->Run();
+        init_flag ? ChangeInitStep(InitStep::Init_SafetyManager)
+                  : ChangeInitStep(InitStep::Init_Failed);
+      } break;
+      case InitStep::Init_SafetyManager: {
+        safety_manager_ptr_.reset(new SafetyManager);
+        init_flag = safety_manager_ptr_->Run();
         init_flag ? ChangeInitStep(InitStep::Init_Done)
                   : ChangeInitStep(InitStep::Init_Failed);
+      } break;
+      case InitStep::Init_Done: {
+        LOG_INFO("Init_Done");
+        break;
+      }
+      case InitStep::Init_Failed: {
+        LOG_ERROR("Init_Failed");
+        break;
       }
     }
   }
@@ -70,10 +84,10 @@ void ModuleManager::Run() {
 }
 
 void ModuleManager::ChangeInitStep(const InitStep& next_step) {
-  static std::string state_str[9] = {
-      "Init_ConfigManager",  "Init_Log",        "TimerManager",
-      "Init_RuntimeManager", "Init_MapManager", "Init_SafetyManager",
-      "Init_PlanManager",    "Init_Done",       "Init_Failed"};
+  static std::string state_str[8] = {"Init_ConfigManager",  "Init_Log",
+                                     "Init_RuntimeManager", "Init_MapManager",
+                                     "Init_SafetyManager",  "Init_PlanManager",
+                                     "Init_Done",           "Init_Failed"};
   int pre_s = int(init_step_);
   init_step_ = next_step;
   if (Logger::GetInstance()->GetInitFlag()) {

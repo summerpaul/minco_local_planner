@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 00:07:16
+ * @Last Modified time: 2023-08-29 18:49:12
  */
 #include <stdint.h>
 
@@ -49,7 +49,35 @@ struct MapManagerConfig {
 
   double grid_map_height = 10.0;  // 地图的高 单位m
 };
+// 安全管理配置
+struct SafetyManagerConfig {
+  //   安全检车路径的长度
+  double safe_check_path_length{3.0};
+  //   检查安全路径的时间减肥
+  double safe_check_sleep_time{0.1};
+  //   紧急停止的路径长度
+  double emergency_stop_length{0.5};
+  //   安全距离
+  double safe_distance{0.2};
+  // 优化的最短距离
+  double replan_dist{0.1};
 
+  double slow_down_length{1.0};
+  //
+  double max_kappa{100};
+  // 增加车辆轮廓
+  double vehicle_length{0.5};
+  double vehicle_width{0.5};
+  double back_to_center{0.25};
+  double slow_down_box_x_margin{0.5};
+  double slow_down_box_y_margin{0.5};
+  double stop_box_x_margin{0.3};
+  double stop_box_y_margin{0.3};
+  double creep_box_x_margin{0.1};
+  double creep_box_y_margin{0.1};
+
+  int dangerous_to_safe_counts{20};  // 车辆从危险状态转到安全状态counts
+};
 }  // namespace minco_local_planner::config_manager
 
 #endif /* __CONFIG_DATA_H__ */

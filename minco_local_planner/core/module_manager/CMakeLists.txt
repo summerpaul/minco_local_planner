@@ -4,4 +4,5 @@ target_link_libraries(module_manager
     spdlog
     runtime_manager
     map_manager
+    safety_manager
     )

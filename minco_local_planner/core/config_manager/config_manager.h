@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 00:08:37
+ * @Last Modified time: 2023-08-29 18:49:40
  */
 #include <stdint.h>
 
@@ -41,6 +41,9 @@ class ConfigManager : public BaseModule {
   const MapManagerConfig& GetMapManagerConfig() const {
     return map_manager_cfg_;
   }
+  const SafetyManagerConfig& GetSafetyManagerConfig() const {
+    return safety_manager_cfg_;
+  }
 
  private:
   bool ParseLogConfig(const Json::Value& log_cfg_json);
@@ -51,6 +54,7 @@ class ConfigManager : public BaseModule {
   LogConfig log_cfg_;
   RuntimeMangerConfig runtime_manager_cfg_;
   MapManagerConfig map_manager_cfg_;
+  SafetyManagerConfig safety_manager_cfg_;
 };
 }  // namespace minco_local_planner::config_manager
 
