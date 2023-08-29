@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 22:20:24
+ * @Last Modified time: 2023-08-29 20:23:17
  */
 #include "map_manager.h"
 
@@ -33,6 +33,7 @@ bool MapManager::Start() {
   return true;
 }
 void MapManager::Stop() {}
+
 
 void MapManager::GenerateInitGridMap() {
   grid_map_ptr_.reset(new GridMap);

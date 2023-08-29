@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:54:13
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:10:44
+ * @Last Modified time: 2023-08-29 20:40:00
  */
 #include <stdint.h>
 
@@ -13,13 +13,13 @@
 namespace minco_local_planner::basis {
 
 struct TrajectoryPoint : public Vec6d {
-  const double getX() const { return (*this)[0]; }
-  const double getY() const { return (*this)[1]; }
-  const double getYaw() const { return (*this)[2]; }
-  const double getKappa() const { return (*this)[3]; }
-  const double getS() const { return (*this)[4]; }
-  const double getVel() const { return (*this)[5]; }
-  const Vec2d getPos() const { return (*this).head(2); }
+  const double GetX() const { return (*this)[0]; }
+  const double GetY() const { return (*this)[1]; }
+  const double GetYaw() const { return (*this)[2]; }
+  const double GetKappa() const { return (*this)[3]; }
+  const double GetS() const { return (*this)[4]; }
+  const double GetVel() const { return (*this)[5]; }
+  const Vec2d GetPos() const { return (*this).head(2); }
   const Pose2d GetPose2d() const { return (*this).head(3); }
 
   void SetX(const double &x) { (*this)[0] = x; }

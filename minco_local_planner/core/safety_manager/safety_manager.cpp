@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:06:01
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:10:30
+ * @Last Modified time: 2023-08-29 20:56:39
  */
 #include "safety_manager.h"
 
@@ -17,6 +17,7 @@ namespace minco_local_planner::safety_manager {
 
 using namespace module_manager;
 SafetyManager::SafetyManager() : BaseModule("SafetyManager") {}
+
 SafetyManager::~SafetyManager() {}
 bool SafetyManager::Init() {
   cfg_ = ModuleManager::GetInstance()
@@ -28,9 +29,10 @@ bool SafetyManager::Init() {
 
   return true;
 }
+
 bool SafetyManager::Start() {
   Singleton<TimerManager>()->Schedule(
-      100, std::bind(&SafetyManager::CheckBoundingBoxes, this));
+      100, std::bind(&SafetyManager::CheckBoundingBoxesTimer, this));
   return true;
 }
 void SafetyManager::Stop() {}
@@ -57,7 +59,65 @@ void SafetyManager::GenerateBoundingBoxes() {
                   cfg_.slow_down_box_y_margin, "slow_down");
 }
 
-void SafetyManager::CheckBoundingBoxes() {
+void SafetyManager::UpdateCheckTraj(const Trajectory& traj) {
+  std::lock_guard<std::mutex> lock(check_traj_mtx_);
+  check_traj_ = traj;
+  check_traj_length_ = check_traj_.Length();
+}
+
+void SafetyManager::CheckTrajectoryTimer() {
+  std::lock_guard<std::mutex> lock1(check_traj_mtx_);
+  std::lock_guard<std::mutex> lock2(safe_check_path_mtx_);
+  const int check_traj_size = check_traj_.size();
+  if (check_traj_size == 0) {
+    if (vehicle_safety_status_ == SafetyStatus::SAFE &&
+        path_safety_status_ != SafetyStatus::SAFE) {
+      ChangePathSafetyState(SafetyStatus::SAFE);
+    }
+
+    else if (vehicle_safety_status_ == SafetyStatus::STOP &&
+             path_safety_status_ != SafetyStatus::STOP) {
+      ChangePathSafetyState(SafetyStatus::STOP);
+    }
+
+    return;
+  }
+
+  const auto cur_pose = ModuleManager::GetInstance()
+                            ->GetRuntimeManager()
+                            ->GetVehiclePose()
+                            .GetPos();
+  auto it_nearest = check_traj_.FindNearest(
+      check_traj_.begin(), check_traj_.end(), cur_pose, check_traj_length_);
+
+  Path2d safe_check_path;
+  const double it_nearest_s = it_nearest->GetS();
+
+  for (auto it = it_nearest; it != check_traj_.end(); ++it) {
+    const auto check_length = it->GetS() - it_nearest_s;
+    const auto check_pose = it->GetPos();
+    safe_check_path.emplace_back(check_pose);
+    const auto cur_kappa = std::fabs(it->GetKappa());
+    // 检查轨迹的曲率
+    if (IsLarge(cur_kappa, cfg_.max_kappa)) {
+      if (path_safety_status_ != SafetyStatus::OVER_MAX_KAPPA) {
+        ChangePathSafetyState(SafetyStatus::OVER_MAX_KAPPA);
+      }
+      return;
+    }
+    // 安全检查范围内都内安全
+    if (IsLarge(check_length, cfg_.safe_check_path_length)) {
+      if (path_safety_status_ != SafetyStatus::SAFE) {
+        ChangePathSafetyState(SafetyStatus::SAFE);
+      }
+      return;
+    }
+  }
+}
+
+void SafetyManager::CheckCoordObs(const Vec2d& pt) {}
+
+void SafetyManager::CheckBoundingBoxesTimer() {
   const auto pointcloud =
       ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();
 

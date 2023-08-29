@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:20:58
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 21:18:35
+ * @Last Modified time: 2023-08-29 20:56:08
  */
 #include <stdint.h>
 
@@ -36,7 +36,7 @@ class Trajectory : public vec_E<TrajectoryPoint> {
   double Length() const {
     double l = 0;
     for (size_t i = 1; i < size(); i++) {
-      l += ((*this)[i - 1].getPos() - (*this)[i].getPos()).norm();
+      l += ((*this)[i - 1].GetPos() - (*this)[i].GetPos()).norm();
     }
     return l;
   }
@@ -50,16 +50,16 @@ class Trajectory : public vec_E<TrajectoryPoint> {
     }
     double distance_path_search = 0;
     ConstIterator it_nearest = begin;
-    double min_dist = (begin->getPos() - target).norm();
+    double min_dist = (begin->GetPos() - target).norm();
     ConstIterator it_prev = begin;
     for (ConstIterator it = begin + 1; it != end; ++it) {
-      const Vec2d inc = it->getPos() - it_prev->getPos();
+      const Vec2d inc = it->GetPos() - it_prev->GetPos();
       distance_path_search += inc.norm();
       if (max_search_range > 0 && distance_path_search > max_search_range) {
         break;
       }
       const double d =
-          LineStripDistanceSigned(it_prev->getPos(), it->getPos(), target);
+          LineStripDistanceSigned(it_prev->GetPos(), it->GetPos(), target);
       const double d_compare = (d > 0) ? d : (-d - EPSION);
       const double d_abs = std::abs(d);
       if (d_compare <= min_dist ||
@@ -74,7 +74,7 @@ class Trajectory : public vec_E<TrajectoryPoint> {
     }
 
     for (ConstIterator it = it_nearest + 1; it < end; ++it) {
-      const double dis = (target - it->getPos()).norm();
+      const double dis = (target - it->GetPos()).norm();
       if (dis > distance) {
         it_nearest = it;
         break;
@@ -84,7 +84,7 @@ class Trajectory : public vec_E<TrajectoryPoint> {
     return it_nearest;
   }
 
-  void emplace_back_pt(TrajectoryPoint pt) {
+  void EmplaceBack(TrajectoryPoint pt) {
     if (this->size() == 0) {
       pt.SetS(0);
       this->emplace_back(pt);
@@ -92,15 +92,15 @@ class Trajectory : public vec_E<TrajectoryPoint> {
     }
 
     TrajectoryPoint back_point = this->back();
-    const double last_s = back_point.getS();
-    const Vec2d diff = pt.getPos() - back_point.getPos();
+    const double last_s = back_point.GetS();
+    const Vec2d diff = pt.GetPos() - back_point.GetPos();
     const double add_s = diff.norm();
     pt.SetS(last_s + add_s);
     this->emplace_back(pt);
     return;
   }
 
-  void trapezoidSpeedReplan(const double &start_vel, const double &target_vel,
+  void TrapezoidSpeedReplan(const double &start_vel, const double &target_vel,
                             const double &end_vel, const double &acc,
                             const double &dec, const double &creep_dist,
                             const double &creep_speed,
@@ -158,7 +158,7 @@ class Trajectory : public vec_E<TrajectoryPoint> {
     }
     double speed = 0;
     for (auto it = this->begin(); it != this->end(); ++it) {
-      const double dist = it->getS();
+      const double dist = it->GetS();
       if (dist < s0) {
         speed = init_speed;
       }

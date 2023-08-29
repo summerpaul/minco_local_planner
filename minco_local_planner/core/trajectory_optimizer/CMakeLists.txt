@@ -1,0 +1,1 @@
+add_library(trajectory_optimizer trajectory_optimizer.cpp minco_optimizer.cpp bspline_optimizer.cpp)
