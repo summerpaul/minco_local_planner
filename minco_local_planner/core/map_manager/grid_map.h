@@ -2,13 +2,12 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 22:42:59
+ * @Last Modified time: 2023-08-30 23:00:00
  */
 #include <stdint.h>
 
 #ifndef __GRID_MAP_H__
 #define __GRID_MAP_H__
-#include <omp.h>
 
 #include <memory>
 #include <mutex>

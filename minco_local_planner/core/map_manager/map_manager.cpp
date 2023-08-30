@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 22:48:00
+ * @Last Modified time: 2023-08-30 23:03:05
  */
 #include "map_manager.h"
 
@@ -128,6 +128,7 @@ void MapManager::GenerateTransformedPointcloudTimer() {
 
 void MapManager::GenerateLocalGridMapTimer() {
   // 获取原始的lasercan数据
+
   std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
   const VehiclePose pose =
       ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
