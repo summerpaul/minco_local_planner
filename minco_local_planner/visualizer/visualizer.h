@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:28
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 10:59:10
+ * @Last Modified time: 2023-08-30 18:58:10
  */
 #include <stdint.h>
 
@@ -27,9 +27,12 @@ class Visualizer {
  public:
   Visualizer();
 
-  void GridMapVis(const Pose2d &origin, const Vec2i &dim,
-                  const std::vector<int8_t> &data, const double &res,
-                  const std::string &frame_id = "odom");
+  void LocalGridMapVis(const Pose2d &origin, const Vec2i &dim,
+                       const std::vector<int8_t> &data, const double &res,
+                       const std::string &frame_id = "odom");
+  void GlobalGridMapVis(const Pose2d &origin, const Vec2i &dim,
+                        const std::vector<int8_t> &data, const double &res,
+                        const std::string &frame_id = "odom");
   void TransformedPcdVis(const PointCloud3d &cloud,
                          const std::string frame_id = "base_link");
 
@@ -41,7 +44,8 @@ class Visualizer {
 
  private:
   ros::NodeHandle nh_;
-  ros::Publisher grid_map_pub_;
+  ros::Publisher local_map_pub_;   // 局部栅格地图
+  ros::Publisher global_map_pub_;  // 全局动态栅格地图
   ros::Publisher transformed_pcd_pub_;
   ros::Publisher safety_bounding_boxes_pub_;
   ros::Publisher bezier_segments_pub_;

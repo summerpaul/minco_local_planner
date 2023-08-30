@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:05:56
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 15:44:11
+ * @Last Modified time: 2023-08-30 18:13:48
  */
 #include <stdint.h>
 
@@ -17,7 +17,6 @@
 #include "basis/trajectory.h"
 #include "bounding_box.h"
 #include "config_manager/config_data.h"
-#include "raycast.h"
 
 namespace minco_local_planner::safety_manager {
 using namespace config_manager;
@@ -58,9 +57,6 @@ class SafetyManager : public BaseModule {
 
   void SetEndPoit(const Vec2d& end_pt) { end_pt_ = end_pt; }
 
- 
-  bool CheckPose2dObs(const Pose2d& check_pt);
-
  private:
   void GenerateBoundingBoxes();
 
@@ -83,6 +79,7 @@ class SafetyManager : public BaseModule {
   std::mutex check_traj_mtx_;
   Trajectory check_traj_;
   double check_traj_length_;
+
 
   const std::string safety_status_str_[6] = {"SAFE",   "SLOW_DOWN",
                                              "CREEP",  "EMERGENCY_STOP",

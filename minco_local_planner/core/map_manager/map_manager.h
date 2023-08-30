@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:19
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:23:14
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 19:15:07
  */
 #include <stdint.h>
 
@@ -33,22 +33,38 @@ class MapManager : public BaseModule {
   virtual bool Start() override;
   virtual void Stop() override;
 
-  const GridMap::Ptr GetGridMap() const { return grid_map_ptr_; }
+  const GridMap::Ptr GetLocalMap() const { return local_map_ptr_; }
+
+  const GridMap::Ptr GetGlobalMap() const { return global_map_ptr_; }
 
   const PointCloud3d &GetTransformedPointcloud() const {
     return transformed_pointcloud_;
   }
+  const bool HaveLocalMap() const { return b_have_local_map_; }
+
+  const bool HaveGlobalMap() const { return b_have_global_map_; }
 
  private:
-  void GenerateGridMapTimer();
+  //  生成车体坐标系下的点云的定时器
+  void GenerateTransformedPointcloudTimer();
+  // 生成局部地图的定时器
+  void GenerateLocalGridMapTimer();
+  // 生成全局地图的计时器
+  void GenerateGlobalGridMapTimer();
+  // 生成初始的局部栅格地图
+  void GenerateInitLocalGridMap();
 
-  void GenerateInitGridMap();
+  bool GenerateInitGlobalGridMap();
 
  private:
   void raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud_out);
 
  private:
-  GridMap::Ptr grid_map_ptr_;  // 车身坐标系下的局部栅格地图
+  GridMap::Ptr local_map_ptr_;   // 局部地图
+  GridMap::Ptr global_map_ptr_;  // 全局地图
+  bool b_have_local_map_ = false;
+  bool b_have_global_map_ = false;
+  std::vector<int8_t> global_map_data_;  // 用于存储静态地图的数据
   MapManagerConfig cfg_;
   std::mutex transformed_pointcloud_mutex_;
   PointCloud3d transformed_pointcloud_;  // 使用外参标定后的点云地图，用于停障
@@ -57,7 +73,6 @@ class MapManager : public BaseModule {
   double res_inv_;
   int width_;
   int height_;
-
 };
 
 }  // namespace minco_local_planner::map_manager

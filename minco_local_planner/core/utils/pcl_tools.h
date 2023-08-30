@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:32:15
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 22:54:36
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 18:50:16
  */
 #include <stdint.h>
 
@@ -33,8 +33,8 @@ inline bool LoadPointCloud(const std::string &map_path,
   return true;
 }
 
-inline void GenerateGridMap(PointCloud3d &cloud, Vec2d &origin, Vec2i &dim,
-                            std::vector<int8_t> &data,
+inline void GenerateGridMap(const PointCloud3d &cloud, Pose2d &origin,
+                            Vec2i &dim, std::vector<int8_t> &data,
                             const double &resolution = 0.05,
                             const double &inf_size = 0.3) {
   double x_min{0}, x_max{0}, y_min{0}, y_max{0}, x{0}, y{0};
@@ -62,7 +62,7 @@ inline void GenerateGridMap(PointCloud3d &cloud, Vec2d &origin, Vec2i &dim,
   }
 
   // 得到栅格地图的起点
-  origin = Vec2d(x_min, y_min);
+  origin = Vec3d(x_min, y_min, 0);
   // 得到栅格地图的尺寸
   dim[0] = ceil((x_max - x_min) / resolution);
   dim[1] = ceil((y_max - y_min) / resolution);

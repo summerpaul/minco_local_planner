@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 15:11:13
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 15:41:43
+ * @Last Modified time: 2023-08-30 16:25:56
  */
 #include <stdint.h>
 
@@ -11,7 +11,7 @@
 
 #include "basis/data_type.h"
 #include "basis/math.h"
-namespace minco_local_planner::safety_manager {
+namespace minco_local_planner::map_manager {
 using namespace basis;
 
 class RayCaster {
@@ -76,5 +76,5 @@ class RayCaster {
   double dist_;
   int step_num_;
 };
-}  // namespace minco_local_planner::safety_manager
+}  // namespace minco_local_planner::map_manager
 #endif /* __RAYCAST_H__ */

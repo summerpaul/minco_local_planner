@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 21:25:37
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 19:46:50
  */
 #include <stdint.h>
 
@@ -15,6 +15,7 @@
 
 #include "basis/data_type.h"
 #include "basis/rigid2d.h"
+#include "raycast.h"
 namespace minco_local_planner::map_manager {
 
 using namespace basis;
@@ -63,6 +64,14 @@ class GridMap {
   size_t GetIndex(const Vec2i &pn) { return pn(0) + width_ * pn(1); }
 
   void SetDataZero() { data_.assign(data_size_, FREE); }
+
+  void SetData(const std::vector<int8_t> &data) {
+    if (data.size() != data_size_) {
+      return;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    data_ = data;
+  }
   void SetOrigin(const Pose2d &origin) { origin_ = origin; }
 
   bool IsVerify(const Vec2i &pn) {
@@ -108,6 +117,33 @@ class GridMap {
   bool IsOccupied(const Vec2i &pn) { return IsOccupied(GetIndex(pn)); }
   bool IsOccupied(const Vec2d &pt) { return IsOccupied(DoubleToInt(pt)); }
 
+  void CheckCollisionUsingPosAndYaw(const Pose2d &state,
+                                    const Points2d &car_vertex, bool &res) {
+    res = false;
+    Vec2d pos = state.head(2);
+    double yaw = state[2];
+    Mat2d Rotation_matrix;
+    Rotation_matrix << cos(yaw), -sin(yaw), sin(yaw), cos(yaw);
+    for (int i = 0; i < 4; i++) {
+      Vec2d start_point = pos + Rotation_matrix * car_vertex[i];
+      Vec2d end_point = pos + Rotation_matrix * car_vertex[i + 1];
+      RayCaster raycaster;
+      bool need_ray =
+          raycaster.SetInput(start_point * res_inv_, end_point * res_inv_);
+      if (!need_ray) return;
+
+      Vec2d half(0.5, 0.5);
+      Vec2d ray_pt;
+      while (raycaster.Step(ray_pt)) {
+        Vec2d tmp = (ray_pt + half) * res_;
+        if (IsOccupied(tmp)) {
+          res = true;
+          return;
+        }
+      }
+    }
+  }
+
   bool Query(const Vec2i &pn) {
     if (!IsVerify(pn)) {
       return false;
@@ -135,7 +171,7 @@ class GridMap {
     std::lock_guard<std::mutex> lock(mutex_);
     data_[index] = OCC;
   }
-
+  // void SetOccupied(const Vec2d &pt) { SetOccupied(DoubleToInt(pt)); }
   void SetOccupied(const Vec2i &pn) {
     if (!IsVerify(pn)) {
       return;
@@ -153,7 +189,6 @@ class GridMap {
     if (inf_size == 0) {
       SetOccupied(pn);
     } else if (inf_size > 0) {
-#pragma omp parallel for num_threads(32)
       for (int x = -inf_step; x < inf_step; ++x)
         for (int y = -inf_step; y < inf_step; ++y) {
           SetOccupied(pn + Vec2i(x, y));
@@ -190,6 +225,7 @@ class GridMap {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
 }  // namespace minco_local_planner::map_manager
 
 #endif /* __GRID_MAP_H__ */

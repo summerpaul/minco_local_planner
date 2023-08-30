@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 11:18:55
+ * @Last Modified time: 2023-08-30 19:27:11
  */
 #include "demo.h"
 
@@ -131,11 +131,23 @@ void Demo::StartNaviCallback(const std_msgs::Empty::ConstPtr &msg) {
 }
 
 void Demo::VisTimer() {
-  // 显示栅格地图
-  const auto gird_map =
-      ModuleManager::GetInstance()->GetMapManager()->GetGridMap();
-  visualizer_.GridMapVis(gird_map->GetOrigin(), gird_map->GetDim(),
-                         gird_map->GetData(), gird_map->GetRes());
+  //  显示局部栅格地图
+  if (ModuleManager::GetInstance()->GetMapManager()->HaveLocalMap()) {
+    const auto local_gird_map =
+        ModuleManager::GetInstance()->GetMapManager()->GetLocalMap();
+    visualizer_.LocalGridMapVis(
+        local_gird_map->GetOrigin(), local_gird_map->GetDim(),
+        local_gird_map->GetData(), local_gird_map->GetRes());
+  }
+  // 显示全局栅格地图
+  if (ModuleManager::GetInstance()->GetMapManager()->HaveGlobalMap()) {
+    const auto global_gird_map =
+        ModuleManager::GetInstance()->GetMapManager()->GetGlobalMap();
+
+    visualizer_.GlobalGridMapVis(
+        global_gird_map->GetOrigin(), global_gird_map->GetDim(),
+        global_gird_map->GetData(), global_gird_map->GetRes());
+  }
 
   const PointCloud3d transformed_pcd =
       ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();

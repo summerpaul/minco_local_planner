@@ -9,6 +9,7 @@
         "message_wait_time": 0.5
     },
     "map_manager_cfg": {
+        "pcd_map_path": "/home/ubuntu/Project/minco_local_planner_ws/src/minco_local_planner/minco_local_planner/pcdmap/demo.pcd",
         "base_to_laser_yaw": 0,
         "base_to_laser_x": 0,
         "base_to_laser_y": 0,
@@ -21,7 +22,8 @@
         "grid_map_width": 8,
         "map_generate_time": 0.10000000000000001,
         "raycast_dis": 0.5,
-        "raycast_res": 0.10000000000000001
+        "raycast_res": 0.10000000000000001,
+        "use_global_map": true
     },
     "safety_manafger_cfg": {
         "emergency_stop_length": 0.4,

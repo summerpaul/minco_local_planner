@@ -3,7 +3,7 @@
   <env name="GAZEBO_RESOURCE_PATH" value="${GAZEBO_RESOURCE_PATH}:$(find warehouse_simulation)/models"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find warehouse_simulation)/worlds/empty.world"/>
+    <arg name="world_name" value="$(find warehouse_simulation)/worlds/warehouse_static.world"/>
     <arg name="paused" value="false"/>
     <arg name="gui" value="true"/> 
   </include>

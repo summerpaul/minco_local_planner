@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 10:59:37
+ * @Last Modified time: 2023-08-30 19:05:50
  */
 #include "visualizer.h"
 
@@ -12,21 +12,13 @@
 using namespace std;
 
 namespace visualizer {
+namespace {
 
-Visualizer::Visualizer() {
-  grid_map_pub_ = nh_.advertise<nav_msgs::OccupancyGrid>("grid_map", 1);
-  transformed_pcd_pub_ =
-      nh_.advertise<sensor_msgs::PointCloud2>("transformed_pcd", 1);
-
-  safety_bounding_boxes_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(
-      "safety_bounding_boxes", 1);
-  bezier_segments_pub_ =
-      nh_.advertise<visualization_msgs::MarkerArray>("bezier_segments", 1);
-}
-
-void Visualizer::GridMapVis(const Pose2d &origin, const Vec2i &dim,
-                            const std::vector<int8_t> &data, const double &res,
-                            const std::string &frame_id) {
+nav_msgs::OccupancyGrid GenerateOccupancyGrid(const Pose2d &origin,
+                                              const Vec2i &dim,
+                                              const std::vector<int8_t> &data,
+                                              const double &res,
+                                              const std::string &frame_id) {
   nav_msgs::OccupancyGrid grid_map_ros;
   grid_map_ros.header.frame_id = frame_id;
   geometry_msgs::Pose pose;
@@ -44,10 +36,44 @@ void Visualizer::GridMapVis(const Pose2d &origin, const Vec2i &dim,
   grid_map_ros.info.width = dim.x();
   grid_map_ros.info.height = dim.y();
   grid_map_ros.info.origin = pose;
+  return grid_map_ros;
+}
+}  // namespace
 
-  grid_map_pub_.publish(grid_map_ros);
+Visualizer::Visualizer() {
+  local_map_pub_ = nh_.advertise<nav_msgs::OccupancyGrid>("local_grid_map", 1);
+
+  global_map_pub_ =
+      nh_.advertise<nav_msgs::OccupancyGrid>("global_grid_map", 1);
+  transformed_pcd_pub_ =
+      nh_.advertise<sensor_msgs::PointCloud2>("transformed_pcd", 1);
+
+  safety_bounding_boxes_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(
+      "safety_bounding_boxes", 1);
+  bezier_segments_pub_ =
+      nh_.advertise<visualization_msgs::MarkerArray>("bezier_segments", 1);
 }
 
+void Visualizer::LocalGridMapVis(const Pose2d &origin, const Vec2i &dim,
+                                 const std::vector<int8_t> &data,
+                                 const double &res,
+                                 const std::string &frame_id) {
+  local_map_pub_.publish(
+      GenerateOccupancyGrid(origin, dim, data, res, frame_id));
+}
+void Visualizer::GlobalGridMapVis(const Pose2d &origin, const Vec2i &dim,
+                                  const std::vector<int8_t> &data,
+                                  const double &res,
+                                  const std::string &frame_id) {
+  static nav_msgs::OccupancyGrid global_gird_map_vis;
+  static bool first_hit = true;
+  if (first_hit) {
+    global_gird_map_vis =
+        GenerateOccupancyGrid(origin, dim, data, res, frame_id);
+    first_hit = false;
+  }
+  global_map_pub_.publish(global_gird_map_vis);
+}
 void Visualizer::TransformedPcdVis(const PointCloud3d &cloud,
                                    const std::string frame_id) {
   sensor_msgs::PointCloud2 cloud_msg;

@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 14:24:59
+ * @Last Modified time: 2023-08-30 19:43:30
  */
 #include "map_manager.h"
 
@@ -10,6 +10,7 @@
 
 #include "basis/time.h"
 #include "module_manager/module_manager.h"
+#include "utils/pcl_tools.h"
 #include "utils/singleton.h"
 #include "utils/timer_manager.h"
 namespace minco_local_planner::map_manager {
@@ -20,41 +21,75 @@ using namespace module_manager;
 bool MapManager::Init() {
   cfg_ =
       ModuleManager::GetInstance()->GetConfigManager()->GetMapManagerConfig();
-  GenerateInitGridMap();
+  GenerateInitLocalGridMap();
   base_to_laser_[0] = cfg_.base_to_laser_x;
   base_to_laser_[1] = cfg_.base_to_laser_y;
   base_to_laser_[2] = cfg_.base_to_laser_yaw;
+
+  if (cfg_.use_global_map) {
+    if (!GenerateInitGlobalGridMap()) {
+      LOG_ERROR("failed to load pcd map");
+      return false;
+    }
+    b_have_global_map_ = true;
+  }
 
   return true;
 }
 bool MapManager::Start() {
   Singleton<TimerManager>()->Schedule(
       int(cfg_.map_generate_time * 1000),
-      std::bind(&MapManager::GenerateGridMapTimer, this));
+      std::bind(&MapManager::GenerateTransformedPointcloudTimer, this));
+  Singleton<TimerManager>()->Schedule(
+      int(cfg_.map_generate_time * 1000),
+      std::bind(&MapManager::GenerateLocalGridMapTimer, this));
+
+  if (cfg_.use_global_map) {
+    Singleton<TimerManager>()->Schedule(
+        int(cfg_.map_generate_time * 1000),
+        std::bind(&MapManager::GenerateGlobalGridMapTimer, this));
+  }
   return true;
 }
 void MapManager::Stop() {}
 
-void MapManager::GenerateInitGridMap() {
-  grid_map_ptr_.reset(new GridMap);
-
+void MapManager::GenerateInitLocalGridMap() {
+  local_map_ptr_.reset(new GridMap);
   const double res = cfg_.grid_map_res;
-
   res_inv_ = 1 / cfg_.grid_map_res;
   width_ = std::ceil(cfg_.grid_map_width * res_inv_);
   height_ = std::ceil(cfg_.grid_map_height * res_inv_);
   std::vector<int8_t> data;
   const int data_size = width_ * height_;
-
   data.resize(data_size);
   data.assign(data_size, FREE);
   map_offset_ = -0.5 * Pose2d(cfg_.grid_map_width, cfg_.grid_map_height, 0);
-
   Pose2d origin;
-
   const Vec2i dim(width_, height_);
+  local_map_ptr_->CreateGridMap(origin, dim, data, res);
+  std::cout << "dim is " << dim << std::endl;
+  b_have_local_map_ = true;
+}
 
-  grid_map_ptr_->CreateGridMap(origin, dim, data, res);
+bool MapManager::GenerateInitGlobalGridMap() {
+  PointCloud3d cloud;
+  if (!LoadPointCloud(cfg_.pcd_map_path, cloud)) {
+    LOG_ERROR("failed to load pcd map ");
+    return false;
+  }
+  downSampling(cloud, cfg_.grid_map_res);
+  Pose2d origin;
+  Vec2i dim;
+  GenerateGridMap(cloud, origin, dim, global_map_data_, cfg_.grid_map_res,
+                  cfg_.grid_map_inf_size);
+
+  global_map_ptr_.reset(new GridMap);
+  global_map_ptr_->CreateGridMap(origin, dim, global_map_data_,
+                                 cfg_.grid_map_res);
+  LOG_INFO("points size is {}", cloud.size());
+  LOG_INFO("global_map_data_ size is {}", global_map_data_.size());
+
+  return true;
 }
 
 void MapManager::raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud) {
@@ -80,9 +115,8 @@ void MapManager::raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud) {
   cloud.width = cloud.points.size();
   cloud.height = 1;
 }
-
-void MapManager::GenerateGridMapTimer() {
-  // 获取原始的lasercan数据
+void MapManager::GenerateTransformedPointcloudTimer() {
+  std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
   const LaserScan scan =
       ModuleManager::GetInstance()->GetRuntimeManager()->GetLaserScan();
   PointCloud3d local_point_cloud;
@@ -90,14 +124,19 @@ void MapManager::GenerateGridMapTimer() {
   raycast(scan, local_point_cloud);
   TransformPointCloud(local_point_cloud, base_to_laser_,
                       transformed_pointcloud_);
+}
+
+void MapManager::GenerateLocalGridMapTimer() {
+  // 获取原始的lasercan数据
+  std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
   const VehiclePose pose =
       ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
 
   const size_t points_size = transformed_pointcloud_.points.size();
   // 重置栅格地图数据
-  grid_map_ptr_->SetDataZero();
+  local_map_ptr_->SetDataZero();
   //
-  grid_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
+  local_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
 
   for (size_t i = 0; i < points_size; ++i) {
     const int x =
@@ -106,7 +145,26 @@ void MapManager::GenerateGridMapTimer() {
     const int y =
         std::round(transformed_pointcloud_.points[i].y * res_inv_ - 0.5) +
         std::ceil(0.5 * height_);
-    grid_map_ptr_->SetOccupied(Vec2i(x, y));
+    local_map_ptr_->SetOccupied(Vec2i(x, y));
+  }
+}
+
+void MapManager::GenerateGlobalGridMapTimer() {
+  std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
+  const size_t points_size = transformed_pointcloud_.points.size();
+
+  global_map_ptr_->SetData(global_map_data_);
+  for (size_t i = 0; i < points_size; ++i) {
+    const int x =
+        std::round(transformed_pointcloud_.points[i].x * res_inv_ - 0.5) +
+        std::ceil(0.5 * width_);
+    const int y =
+        std::round(transformed_pointcloud_.points[i].y * res_inv_ - 0.5) +
+        std::ceil(0.5 * height_);
+    Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
+    Vec2i pn = global_map_ptr_->DoubleToInt(pt);
+
+    global_map_ptr_->SetOccupied(pn);
   }
 }
 

@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:06:01
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 15:46:03
+ * @Last Modified time: 2023-08-30 16:27:25
  */
 #include "safety_manager.h"
 
@@ -56,19 +56,6 @@ void SafetyManager::GenerateBoundingBoxes() {
       BoundingBox(x_min, x_max, y_min, y_max, cfg_.slow_down_box_x_margin,
                   cfg_.slow_down_box_y_margin, "slow_down");
   bouding_boxes_[BoundingBoxType::SLOW_DOWN] = slow_down_box_;
-}
-
-bool SafetyManager::CheckPose2dObs(const Pose2d& check_pt) {
-  Vec2d pos = check_pt.head(2);
-  double yaw = check_pt[2];
-  Mat2d Rotation_matrix;
-  Rotation_matrix << cos(yaw), -sin(yaw), sin(yaw), cos(yaw);
-
-  for (int i = 0; i < 4; i++) {
-    Vec2d start_pt = pos + Rotation_matrix * vehicle_box_points_[i];
-    Vec2d end_pt = pos + Rotation_matrix * vehicle_box_points_[i + 1];
-    RayCaster raycaster;
-  }
 }
 
 void SafetyManager::UpdateCheckTraj(const Trajectory& traj) {

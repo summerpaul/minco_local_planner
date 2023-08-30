@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Map2
+        - /Map2/Status1
       Splitter Ratio: 0.5
     Tree Height: 737
   - Class: rviz/Selection
@@ -61,7 +63,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /grid_map
+      Topic: /local_grid_map
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -286,6 +288,16 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /global_grid_map
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -313,7 +325,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 1.0449998378753662
+      Angle: 0.18999984860420227
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -323,7 +335,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 51.510616302490234
+      Scale: 25.651506423950195
       Target Frame: <Fixed Frame>
       X: 8.7408447265625
       Y: 3.9136762619018555

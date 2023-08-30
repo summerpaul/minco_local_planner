@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:43
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 13:30:24
+ * @Last Modified time: 2023-08-30 18:36:39
  */
 #include "config_manager.h"
 
@@ -23,11 +23,25 @@ bool ConfigManager::Init() {
     return false;
   }
 
-  bool flag = ParseLogConfig(json_cfg["log_cfg"]);
-  flag = ParseRuntimeMangerConfig(json_cfg["runtime_manager_cfg"]);
-  flag = ParseMapManagerConfig(json_cfg["map_manager_cfg"]);
-  flag = ParseSafetyManagerConfig(json_cfg["safety_manafger_cfg"]);
-  return flag;
+  if (!ParseLogConfig(json_cfg["log_cfg"])) {
+    std::cout << "failed to ParseLogConfig " << std::endl;
+    return false;
+  }
+
+  if (!ParseRuntimeMangerConfig(json_cfg["runtime_manager_cfg"])) {
+    std::cout << "failed to ParseRuntimeMangerConfig " << std::endl;
+    return false;
+  }
+  if (!ParseMapManagerConfig(json_cfg["map_manager_cfg"])) {
+    std::cout << "failed to ParseMapManagerConfig " << std::endl;
+    return false;
+  }
+  if (!ParseSafetyManagerConfig(json_cfg["safety_manafger_cfg"])) {
+    std::cout << "failed to ParseSafetyManagerConfig " << std::endl;
+    return false;
+  }
+
+  return true;
 }
 bool ConfigManager::Start() { return true; }
 
@@ -77,6 +91,7 @@ bool ConfigManager::ParseRuntimeMangerConfig(
   }
   runtime_manager_cfg_.message_wait_time =
       runtime_manager_cfg_json["message_wait_time"].asDouble();
+  std::cout << "success to load runtime_manager_cfg_ " << std::endl;
   return true;
 }
 
@@ -161,6 +176,21 @@ bool ConfigManager::ParseMapManagerConfig(
     return false;
   }
   map_manager_cfg_.raycast_res = map_manager_cfg_json["raycast_res"].asDouble();
+
+  if (map_manager_cfg_json["pcd_map_path"].type() == Json::nullValue) {
+    return false;
+  }
+
+  map_manager_cfg_.pcd_map_path =
+      map_manager_cfg_json["pcd_map_path"].asString();
+
+  if (map_manager_cfg_json["use_global_map"].type() == Json::nullValue) {
+    return false;
+  }
+
+  map_manager_cfg_.use_global_map =
+      map_manager_cfg_json["use_global_map"].asBool();
+
   return true;
 }
 

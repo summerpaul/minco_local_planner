@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 15:08:52
+ * @Last Modified time: 2023-08-30 18:36:08
  */
 #include <stdint.h>
 
@@ -24,6 +24,7 @@ struct RuntimeMangerConfig {
 };
 
 struct MapManagerConfig {
+  std::string pcd_map_path{"/root/locate/laser_kc.pcd"};
   double map_generate_time =
       0.1;  // 接受点云数据的时间间隔，如果时间间隔过长，人为数据异常单位s
 
@@ -48,6 +49,7 @@ struct MapManagerConfig {
   double grid_map_width = 4.0;  // 地图的宽 单位 m
 
   double grid_map_height = 7.0;  // 地图的高 单位m
+  bool use_global_map = false;
 };
 // 安全管理配置
 struct SafetyManagerConfig {
@@ -81,7 +83,7 @@ struct SafetyManagerConfig {
 
 struct PathSearchConfig {
   struct KinoAstarConfig {
-    } kino_astar;
+  } kino_astar;
 };
 }  // namespace minco_local_planner::config_manager
 
