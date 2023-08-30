@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:54:13
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:40:00
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 10:42:57
  */
 #include <stdint.h>
 
@@ -24,7 +24,7 @@ struct TrajectoryPoint : public Vec6d {
 
   void SetX(const double &x) { (*this)[0] = x; }
   void SetY(const double &y) { (*this)[1] = y; }
-  void SetTheta(const double &theta) { (*this)[2] = theta; }
+  void SetYaw(const double &yaw) { (*this)[2] = yaw; }
   void SetKappa(const double &kappa) { (*this)[3] = kappa; }
   void SetS(const double &s) { (*this)[4] = s; }
   void SetVel(const double &vel) { (*this)[5] = vel; }

@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:53:21
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 23:10:21
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 10:42:40
  */
 #include <stdint.h>
 
@@ -31,7 +31,7 @@ struct VehiclePose : public Vecd<9> {
 
   void SetX(const double &x) { (*this)[0] = x; }
   void SetY(const double &y) { (*this)[1] = y; }
-  void SetYaw(const double &theta) { (*this)[2] = theta; }
+  void SetYaw(const double &yaw) { (*this)[2] = yaw; }
   void SetVelX(const double &line_vel_x) { (*this)[3] = line_vel_x; }
   void SetVelY(const double &line_vel_y) { (*this)[4] = line_vel_y; }
   void SetAngularVel(const double &angular_vel) { (*this)[5] = angular_vel; }

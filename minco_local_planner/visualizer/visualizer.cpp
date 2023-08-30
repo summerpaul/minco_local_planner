@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 18:58:39
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 10:59:37
  */
 #include "visualizer.h"
 
@@ -20,6 +20,8 @@ Visualizer::Visualizer() {
 
   safety_bounding_boxes_pub_ = nh_.advertise<visualization_msgs::MarkerArray>(
       "safety_bounding_boxes", 1);
+  bezier_segments_pub_ =
+      nh_.advertise<visualization_msgs::MarkerArray>("bezier_segments", 1);
 }
 
 void Visualizer::GridMapVis(const Pose2d &origin, const Vec2i &dim,
@@ -84,5 +86,34 @@ void Visualizer::SafetyBoundingBoxesVis(const std::map<int, BoundingBox> &boxes,
     safety_boxes_vis.markers.emplace_back(box_vis);
   }
   safety_bounding_boxes_pub_.publish(safety_boxes_vis);
+}
+
+void Visualizer::BezierSegmentsVis(const Path2d &bezier_segment_path,
+                                   const Points2d &all_control_points,
+                                   const std::string &frame_id) {
+  if (bezier_segment_path.size() == 0 || all_control_points.size() == 0) {
+    return;
+  }
+
+  visualization_msgs::MarkerArray bezier_segments_vis;
+  visualization_msgs::Marker bezier_path_vis =
+      newLineStrip(0.01, "bezier_path", 1, RED, frame_id);
+  visualization_msgs::Marker bezier_control_points_vis =
+      newSphereList(0.08, "bezier_control_points", 2, BLUE, frame_id);
+  geometry_msgs::Point pt_vis;
+  for (auto &pt : bezier_segment_path) {
+    pt_vis.x = pt.x();
+    pt_vis.y = pt.y();
+    bezier_path_vis.points.emplace_back(pt_vis);
+  }
+  for (auto &control_point : all_control_points) {
+    pt_vis.x = control_point[0];
+    pt_vis.y = control_point[1];
+    bezier_control_points_vis.points.emplace_back(pt_vis);
+  }
+
+  bezier_segments_vis.markers.emplace_back(bezier_path_vis);
+  bezier_segments_vis.markers.emplace_back(bezier_control_points_vis);
+  bezier_segments_pub_.publish(bezier_segments_vis);
 }
 }  // namespace visualizer

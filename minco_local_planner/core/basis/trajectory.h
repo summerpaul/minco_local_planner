@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:20:58
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:56:08
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 11:01:28
  */
 #include <stdint.h>
 
@@ -13,15 +13,15 @@
 
 namespace minco_local_planner::basis {
 
-double Cross2(const Vec2d &a, const Vec2d &b) {
+inline double Cross2(const Vec2d &a, const Vec2d &b) {
   return a[0] * b[1] - a[1] * b[0];
 }
 
-double LineDistance(const Vec2d &a, const Vec2d &b, const Vec2d &c) {
+inline double LineDistance(const Vec2d &a, const Vec2d &b, const Vec2d &c) {
   return Cross2((b - a), (c - a)) / (b - a).norm();
 }
 
-double LineStripDistanceSigned(const Vec2d &a, const Vec2d &b, const Vec2d &c) {
+inline double LineStripDistanceSigned(const Vec2d &a, const Vec2d &b, const Vec2d &c) {
   if ((b - a).dot(c - a) <= 0) return -(c - a).norm();
   if ((a - b).dot(c - b) <= 0) return (c - b).norm();
   return std::abs(LineDistance(a, b, c));

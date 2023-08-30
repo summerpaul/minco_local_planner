@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:28
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 18:59:47
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 10:59:10
  */
 #include <stdint.h>
 
@@ -35,12 +35,16 @@ class Visualizer {
 
   void SafetyBoundingBoxesVis(const std::map<int, BoundingBox> &boxes,
                               const std::string frame_id = "base_link");
+  void BezierSegmentsVis(const Path2d &bezier_segment_path,
+                         const Points2d &all_control_points,
+                         const std::string &frame_id = "odom");
 
  private:
   ros::NodeHandle nh_;
   ros::Publisher grid_map_pub_;
   ros::Publisher transformed_pcd_pub_;
   ros::Publisher safety_bounding_boxes_pub_;
+  ros::Publisher bezier_segments_pub_;
 };
 }  // namespace visualizer
 

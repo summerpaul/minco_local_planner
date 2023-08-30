@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:51
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 22:51:30
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 13:19:54
  */
 #include "runtime_manager.h"
 
@@ -35,7 +35,8 @@ bool RuntimeManager::Init() {
 bool RuntimeManager::Start() {
   using namespace utils;
   Singleton<TimerManager>()->Schedule(
-      100, std::bind(&RuntimeManager::CheckRuntimeTimer, this));
+      int(cfg_.check_sleep_time * 1000),
+      std::bind(&RuntimeManager::CheckRuntimeTimer, this));
 
   return true;
 }

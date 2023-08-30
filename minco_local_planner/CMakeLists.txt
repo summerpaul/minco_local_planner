@@ -22,6 +22,7 @@ endif()
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rviz
 )
 
 
@@ -48,3 +49,4 @@ ${PCL_INCLUDE_DIRS}
 add_subdirectory(core)
 add_subdirectory(app)
 add_subdirectory(visualizer)
+add_subdirectory(plugin)

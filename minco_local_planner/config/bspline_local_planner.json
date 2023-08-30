@@ -1,7 +1,0 @@
-{
-    "log_cfg": {
-        "log_type": 0,
-        "log_level": 1,
-        "log_path": "/home/sunny/Project/my_projet/minco_local_planner_ws/src/minco_local_planner/log"
-    }
-}

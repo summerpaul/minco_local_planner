@@ -1,6 +1,8 @@
 <launch>
 
     <arg name="config_file" default="$(find minco_local_planner)/config/local_planner.json"/>
+    
     <node name="minco_local_planner" pkg="minco_local_planner" type="demo_node" output="screen"  args="$(arg config_file)" >
+    <param name="roadmap_path" value = "$(find minco_local_planner)/roadmap/demo.json"/>
     </node>
 </launch>

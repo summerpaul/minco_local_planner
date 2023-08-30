@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:23:17
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 13:20:47
  */
 #include "map_manager.h"
 
@@ -29,11 +29,11 @@ bool MapManager::Init() {
 }
 bool MapManager::Start() {
   Singleton<TimerManager>()->Schedule(
-      100, std::bind(&MapManager::GenerateGridMapTimer, this));
+      int(cfg_.map_generate_time * 1000),
+      std::bind(&MapManager::GenerateGridMapTimer, this));
   return true;
 }
 void MapManager::Stop() {}
-
 
 void MapManager::GenerateInitGridMap() {
   grid_map_ptr_.reset(new GridMap);

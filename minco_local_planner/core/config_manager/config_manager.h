@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 18:49:40
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 13:23:52
  */
 #include <stdint.h>
 
@@ -48,6 +48,8 @@ class ConfigManager : public BaseModule {
  private:
   bool ParseLogConfig(const Json::Value& log_cfg_json);
   bool ParseRuntimeMangerConfig(const Json::Value& runtime_manager_cfg_json);
+  bool ParseMapManagerConfig(const Json::Value& map_manager_cfg_json);
+  bool ParseSafetyManagerConfig(const Json::Value& safety_manager_cfg_json);
 
  private:
   std::string config_file_path_;

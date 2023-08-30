@@ -7,5 +7,41 @@
     "runtime_manager_cfg": {
         "check_sleep_time": 0.1,
         "message_wait_time": 0.5
+    },
+    "map_manager_cfg": {
+        "base_to_laser_yaw": 0,
+        "base_to_laser_x": 0,
+        "base_to_laser_y": 0,
+        "down_sampling_res": 0.05,
+        "grid_map_inf_size": 0.15,
+        "grid_map_res": 0.05,
+        "laser_max_range": 8,
+        "laser_min_range": 0.2,
+        "grid_map_height": 4,
+        "grid_map_width": 8,
+        "map_generate_time": 0.10000000000000001,
+        "raycast_dis": 0.5,
+        "raycast_res": 0.10000000000000001
+    },
+    "safety_manafger_cfg": {
+        "emergency_stop_length": 0.4,
+        "epsilon": 0.10000000000000001,
+        "max_region_radius": 0.5,
+        "replan_dist": 0.10000000000000001,
+        "safe_check_path_length": 3.0,
+        "safe_check_sleep_time": 0.10000000000000001,
+        "safe_distance": 0.20000000000000001,
+        "slow_down_length": 1.5,
+        "max_kappa": 200,
+        "vehicle_length": 0.5,
+        "vehicle_width": 0.3,
+        "back_to_center": 0.25,
+        "slow_down_box_x_margin": 1.0,
+        "slow_down_box_y_margin": 0.5,
+        "creep_box_x_margin": 0.5,
+        "creep_box_y_margin": 0.2,
+        "stop_box_x_margin": 0.3,
+        "stop_box_y_margin": 0.05,
+        "dangerous_to_safe_counts": 20
     }
 }

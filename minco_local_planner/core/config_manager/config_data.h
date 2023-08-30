@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 18:49:12
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 11:22:32
  */
 #include <stdint.h>
 
@@ -45,9 +45,9 @@ struct MapManagerConfig {
   double base_to_laser_y = 0;
   double base_to_laser_yaw = 0;
 
-  double grid_map_width = 10.0;  // 地图的宽 单位 m
+  double grid_map_width = 4.0;  // 地图的宽 单位 m
 
-  double grid_map_height = 10.0;  // 地图的高 单位m
+  double grid_map_height = 7.0;  // 地图的高 单位m
 };
 // 安全管理配置
 struct SafetyManagerConfig {

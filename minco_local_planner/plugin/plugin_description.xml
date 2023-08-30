@@ -1,0 +1,21 @@
+<!-- 
+  @Author: Yunkai Xia
+  @Date:   2023-03-02 10:54:17
+  @Last Modified by:   Yunkai Xia
+  @Last Modified time: 2023-05-12 10:26:46
+-->
+<library path="lib/libmulti_navi_goal_panel">
+    <class name="navi_multi_goals_pub_rviz_plugin/MultiNaviGoalsPanel"
+           type="navi_multi_goals_pub_rviz_plugin::MultiNaviGoalsPanel"
+           base_class_type="rviz::Panel">
+        <description>A panel widget allowing multi-goals navigation.</description>
+    </class>
+</library>
+
+<library path="lib/libmode_change_panel">
+    <class name="plugin/ModeChangePanel"
+     type="plugin::ModeChangePanel" 
+     base_class_type="rviz::Panel">
+        <description>A panel widget for AMR mode change. </description>
+    </class>
+</library>

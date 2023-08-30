@@ -52,11 +52,14 @@
   <build_depend>roscpp</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
+  <build_export_depend>rviz</build_export_depend>
+  <exec_depend>rviz</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
+  <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-
+	  <rviz plugin="${prefix}/plugin/plugin_description.xml"/>
   </export>
 </package>
