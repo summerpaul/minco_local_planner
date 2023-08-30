@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 22:47:51
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-28 21:39:48
+ * @Last Modified time: 2023-08-30 22:13:36
  */
 #include <stdint.h>
 
@@ -108,8 +108,27 @@ class Transform2D {
   double radians_;
 };
 
+inline Vec2d SubVec2d(const Pose2d &origin, const Vec2d &pose) {
+  Vec2d ret;
+  const auto cos_ = std::cos(origin[2]);
+  const auto sin_ = std::sin(origin[2]);
+  ret[0] = (pose[0] - origin[0]) * cos_ + (pose[1] - origin[1]) * sin_;
+  ret[1] = -(pose[0] - origin[0]) * sin_ + (pose[1] - origin[1]) * cos_;
+
+  return ret;
+}
+
+inline Vec2d AddVec2d(const Pose2d &origin, const Vec2d &incr) {
+  Vec2d ret;
+  const auto cos_ = std::cos(origin[2]);
+  const auto sin_ = std::sin(origin[2]);
+  ret[0] = origin[0] + incr[0] * cos_ - incr[1] * sin_;
+  ret[1] = origin[1] + incr[0] * sin_ + incr[1] * cos_;
+  return ret;
+}
+
 inline Pose2d AddPose2d(const Pose2d &origin, const Pose2d &incr) {
-  Vec3d ret;
+  Pose2d ret;
   ret[0] = origin[0] + incr[0] * cos(origin[2]) - incr[1] * sin(origin[2]);
   ret[1] = origin[1] + incr[0] * sin(origin[2]) + incr[1] * cos(origin[2]);
   ret[2] = NormalizeAngleRad(origin[2] + incr[2]);
@@ -117,7 +136,7 @@ inline Pose2d AddPose2d(const Pose2d &origin, const Pose2d &incr) {
 }
 
 inline Pose2d SubPose2d(const Pose2d &origin, const Pose2d &pose) {
-  Vec3d ret;
+  Pose2d ret;
   const auto cos_ = std::cos(origin[2]);
   const auto sin_ = std::sin(origin[2]);
   ret[0] = (pose[0] - origin[0]) * cos_ + (pose[1] - origin[1]) * sin_;

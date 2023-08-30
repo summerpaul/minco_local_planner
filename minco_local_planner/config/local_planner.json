@@ -9,7 +9,7 @@
         "message_wait_time": 0.5
     },
     "map_manager_cfg": {
-        "pcd_map_path": "/home/ubuntu/Project/minco_local_planner_ws/src/minco_local_planner/minco_local_planner/pcdmap/demo.pcd",
+        "pcd_map_path": "/home/paul/Project/minco_local_planner_ws/src/minco_local_planner/minco_local_planner/pcdmap/demo.pcd",
         "base_to_laser_yaw": 0,
         "base_to_laser_x": 0,
         "base_to_laser_y": 0,

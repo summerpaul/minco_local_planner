@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 19:46:50
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-30 22:42:59
  */
 #include <stdint.h>
 
@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <mutex>
+#include <string>
 
 #include "basis/data_type.h"
 #include "basis/rigid2d.h"
@@ -36,6 +37,8 @@ class GridMap {
   GridMap() = default;
   virtual ~GridMap() = default;
 
+  GridMap(const std::string &name) : name_(name) {}
+
   GridMap(const Pose2d &origin, const Vec2i &dim,
           const std::vector<int8_t> &data, const double &res) {
     CreateGridMap(origin, dim, data, res);
@@ -49,8 +52,6 @@ class GridMap {
     origin_ = origin;
     dim_ = dim;
     data_ = data;
-    trans_ = Transform2D(origin_);
-    trans_inv_ = trans_.Inv();
     width_ = dim_.x();
     height_ = dim_.y();
     data_size_ = data.size();
@@ -174,6 +175,7 @@ class GridMap {
   // void SetOccupied(const Vec2d &pt) { SetOccupied(DoubleToInt(pt)); }
   void SetOccupied(const Vec2i &pn) {
     if (!IsVerify(pn)) {
+      // std::cout << "IsVerify" << std::endl;
       return;
     }
     const int index = GetIndex(pn);
@@ -198,7 +200,8 @@ class GridMap {
 
   Vec2i DoubleToInt(const Vec2d &pt) {
     // 全局坐标系转局部坐标系
-    Vec2d point = trans_inv_(pt);
+
+    Vec2d point = SubVec2d(origin_, pt);
     Vec2i pn;
     pn[0] = std::round((point[0]) / res_ - 0.5);
     pn[1] = std::round((point[1]) / res_ - 0.5);
@@ -206,13 +209,15 @@ class GridMap {
     return pn;
   }
   Vec2d IntToDouble(const Vec2i &pn) {
+    Vec2d pt = (pn.template cast<double>() + Vec2d::Constant(0.5)) * res_;
+
     // 局部坐标系转全局坐标系
-    return trans_((pn.template cast<double>() + Vec2d::Constant(0.5)) * res_);
+    return AddVec2d(origin_, pt);
   }
 
  protected:
+  std::string name_;
   Pose2d origin_;
-  Transform2D trans_, trans_inv_;
   Vec2i dim_;
   double res_;                // 栅格地图的分辨率
   double res_inv_;            // 栅格地图分辨率的倒数

@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 19:43:30
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-30 22:48:00
  */
 #include "map_manager.h"
 
@@ -54,7 +54,7 @@ bool MapManager::Start() {
 void MapManager::Stop() {}
 
 void MapManager::GenerateInitLocalGridMap() {
-  local_map_ptr_.reset(new GridMap);
+  local_map_ptr_.reset(new GridMap("local_grid_map"));
   const double res = cfg_.grid_map_res;
   res_inv_ = 1 / cfg_.grid_map_res;
   width_ = std::ceil(cfg_.grid_map_width * res_inv_);
@@ -83,7 +83,7 @@ bool MapManager::GenerateInitGlobalGridMap() {
   GenerateGridMap(cloud, origin, dim, global_map_data_, cfg_.grid_map_res,
                   cfg_.grid_map_inf_size);
 
-  global_map_ptr_.reset(new GridMap);
+  global_map_ptr_.reset(new GridMap("global_grid_map"));
   global_map_ptr_->CreateGridMap(origin, dim, global_map_data_,
                                  cfg_.grid_map_res);
   LOG_INFO("points size is {}", cloud.size());
@@ -132,39 +132,33 @@ void MapManager::GenerateLocalGridMapTimer() {
   const VehiclePose pose =
       ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
 
-  const size_t points_size = transformed_pointcloud_.points.size();
   // 重置栅格地图数据
   local_map_ptr_->SetDataZero();
   //
   local_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
 
-  for (size_t i = 0; i < points_size; ++i) {
+  for (auto &point : transformed_pointcloud_.points) {
     const int x =
-        std::round(transformed_pointcloud_.points[i].x * res_inv_ - 0.5) +
-        std::ceil(0.5 * width_);
+        std::round(point.x * res_inv_ - 0.5) + std::ceil(0.5 * width_);
     const int y =
-        std::round(transformed_pointcloud_.points[i].y * res_inv_ - 0.5) +
-        std::ceil(0.5 * height_);
-    local_map_ptr_->SetOccupied(Vec2i(x, y));
+        std::round(point.y * res_inv_ - 0.5) + std::ceil(0.5 * height_);
+    Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
+    local_map_ptr_->SetInfOccupied(pt, cfg_.grid_map_inf_size);
   }
 }
 
 void MapManager::GenerateGlobalGridMapTimer() {
   std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
-  const size_t points_size = transformed_pointcloud_.points.size();
+  const Pose2d origin = ModuleManager::GetInstance()
+                            ->GetRuntimeManager()
+                            ->GetVehiclePose()
+                            .GetPose2d();
 
   global_map_ptr_->SetData(global_map_data_);
-  for (size_t i = 0; i < points_size; ++i) {
-    const int x =
-        std::round(transformed_pointcloud_.points[i].x * res_inv_ - 0.5) +
-        std::ceil(0.5 * width_);
-    const int y =
-        std::round(transformed_pointcloud_.points[i].y * res_inv_ - 0.5) +
-        std::ceil(0.5 * height_);
-    Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
-    Vec2i pn = global_map_ptr_->DoubleToInt(pt);
-
-    global_map_ptr_->SetOccupied(pn);
+  for (auto &point : transformed_pointcloud_.points) {
+    Vec2d inr(point.x, point.y);
+    Vec2d pt = AddVec2d(origin, inr);
+    global_map_ptr_->SetInfOccupied(pt, cfg_.grid_map_inf_size);
   }
 }
 

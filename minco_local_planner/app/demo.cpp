@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 19:27:11
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-30 22:20:19
  */
 #include "demo.h"
 
@@ -84,7 +84,16 @@ void Demo::LaserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
 }
 
 void Demo::GoalsCallback(const geometry_msgs::PoseArray::ConstPtr &msg) {}
-void Demo::GoalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg) {}
+void Demo::GoalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg) {
+  std::cout << "in GoalCallback " << std::endl;
+  const auto x = msg->pose.position.x;
+  const auto y = msg->pose.position.y;
+  auto global_map =
+      ModuleManager::GetInstance()->GetMapManager()->GetGlobalMap();
+  Vec2d pt(x, y);
+  std::cout << "pt : " << pt << "is " << global_map->IsOccupied(pt)
+            << std::endl;
+}
 
 void Demo::LoadRoadmapCallback(const std_msgs::Empty::ConstPtr &msg) {
   std::string roadmap_path;

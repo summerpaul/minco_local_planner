@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 19:05:50
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-30 22:42:10
  */
 #include "visualizer.h"
 
@@ -65,14 +65,8 @@ void Visualizer::GlobalGridMapVis(const Pose2d &origin, const Vec2i &dim,
                                   const std::vector<int8_t> &data,
                                   const double &res,
                                   const std::string &frame_id) {
-  static nav_msgs::OccupancyGrid global_gird_map_vis;
-  static bool first_hit = true;
-  if (first_hit) {
-    global_gird_map_vis =
-        GenerateOccupancyGrid(origin, dim, data, res, frame_id);
-    first_hit = false;
-  }
-  global_map_pub_.publish(global_gird_map_vis);
+  global_map_pub_.publish(
+      GenerateOccupancyGrid(origin, dim, data, res, frame_id));
 }
 void Visualizer::TransformedPcdVis(const PointCloud3d &cloud,
                                    const std::string frame_id) {
