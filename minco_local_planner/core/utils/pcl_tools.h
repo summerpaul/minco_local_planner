@@ -8,7 +8,7 @@
 
 #ifndef __PCL_TOOLS_H__
 #define __PCL_TOOLS_H__
-#include <omp.h>
+
 #include <pcl/common/transforms.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/io/pcd_io.h>
@@ -87,7 +87,6 @@ inline void GenerateGridMap(const PointCloud3d &cloud, Pose2d &origin,
     }
 
   } else {
-#pragma omp parallel for num_threads(32)
     for (size_t k = 0; k < points_size; k++) {
       const auto point = cloud.points[k];
       int i = (point.x - x_min) / resolution;
