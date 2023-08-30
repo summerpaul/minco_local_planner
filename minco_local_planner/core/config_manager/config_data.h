@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 11:22:32
+ * @Last Modified time: 2023-08-30 15:08:52
  */
 #include <stdint.h>
 
@@ -77,6 +77,11 @@ struct SafetyManagerConfig {
   double creep_box_y_margin{0.1};
 
   int dangerous_to_safe_counts{20};  // 车辆从危险状态转到安全状态counts
+};
+
+struct PathSearchConfig {
+  struct KinoAstarConfig {
+    } kino_astar;
 };
 }  // namespace minco_local_planner::config_manager
 

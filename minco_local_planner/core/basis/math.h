@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:49:26
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-24 21:34:00
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 15:37:21
  */
 #include <stdint.h>
 
@@ -49,16 +49,6 @@ T NormalizeAngleRad(T rad) {
 }
 
 template <typename T>
-inline int Sign(const T &num) {
-  if (num < 0)
-    return -1;
-  else if (num > 0)
-    return 1;
-  else
-    return 0;
-}
-
-template <typename T>
 inline bool IsClose(const T &a, const T &b) {
   return std::fabs(a - b) < EPSION;
 }
@@ -90,6 +80,23 @@ inline bool IsEqual(const T &value_1, const T &value_2) {
     return true;
   }
   return false;
+}
+
+inline int Sign(const double &num) { return num == 0 ? 0 : num < 0 ? -1 : 1; }
+
+inline double Mod(double value, double modulus) {
+  return fmod(fmod(value, modulus) + modulus, modulus);
+}
+
+inline double Intbound(double s, double ds) {
+  // Find the smallest positive t such that s+t*ds is an integer.
+  if (ds < 0) {
+    return Intbound(-s, -ds);
+  } else {
+    s = Mod(s, 1);
+    // problem is now s+t*ds = 1
+    return (1 - s) / ds;
+  }
 }
 
 }  // namespace minco_local_planner::basis

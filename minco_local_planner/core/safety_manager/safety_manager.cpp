@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:06:01
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:56:39
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 15:46:03
  */
 #include "safety_manager.h"
 
@@ -42,21 +42,33 @@ void SafetyManager::GenerateBoundingBoxes() {
   const auto y_max = 0.5 * cfg_.vehicle_width;
   const auto x_min = -cfg_.back_to_center;
   const auto x_max = cfg_.vehicle_length - cfg_.back_to_center;
-  // 车辆外轮廓
-  //   vehicle_box_ = ;
-  bouding_boxes_[BoundingBoxType::VEHICLE] =
-      BoundingBox(x_min, x_max, y_min, y_max, "vehicle");
+  vehicle_box_ = BoundingBox(x_min, x_max, y_min, y_max, "vehicle");
+  vehicle_box_points_ = vehicle_box_.GetPoints();
+  bouding_boxes_[BoundingBoxType::VEHICLE] = vehicle_box_;
+  stop_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_.stop_box_x_margin,
+                          cfg_.stop_box_y_margin, "stop");
+  bouding_boxes_[BoundingBoxType::STOP] = stop_box_;
 
-  bouding_boxes_[BoundingBoxType::STOP] =
-      BoundingBox(x_min, x_max, y_min, y_max, cfg_.stop_box_x_margin,
-                  cfg_.stop_box_y_margin, "stop");
-  bouding_boxes_[BoundingBoxType::CREEP] =
-      BoundingBox(x_min, x_max, y_min, y_max, cfg_.creep_box_x_margin,
-                  cfg_.creep_box_y_margin, "creep");
-
-  bouding_boxes_[BoundingBoxType::SLOW_DOWN] =
+  creep_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_.creep_box_x_margin,
+                           cfg_.creep_box_y_margin, "creep");
+  bouding_boxes_[BoundingBoxType::CREEP] = creep_box_;
+  slow_down_box_ =
       BoundingBox(x_min, x_max, y_min, y_max, cfg_.slow_down_box_x_margin,
                   cfg_.slow_down_box_y_margin, "slow_down");
+  bouding_boxes_[BoundingBoxType::SLOW_DOWN] = slow_down_box_;
+}
+
+bool SafetyManager::CheckPose2dObs(const Pose2d& check_pt) {
+  Vec2d pos = check_pt.head(2);
+  double yaw = check_pt[2];
+  Mat2d Rotation_matrix;
+  Rotation_matrix << cos(yaw), -sin(yaw), sin(yaw), cos(yaw);
+
+  for (int i = 0; i < 4; i++) {
+    Vec2d start_pt = pos + Rotation_matrix * vehicle_box_points_[i];
+    Vec2d end_pt = pos + Rotation_matrix * vehicle_box_points_[i + 1];
+    RayCaster raycaster;
+  }
 }
 
 void SafetyManager::UpdateCheckTraj(const Trajectory& traj) {
@@ -65,6 +77,7 @@ void SafetyManager::UpdateCheckTraj(const Trajectory& traj) {
   check_traj_length_ = check_traj_.Length();
 }
 
+// 检查安全轨迹
 void SafetyManager::CheckTrajectoryTimer() {
   std::lock_guard<std::mutex> lock1(check_traj_mtx_);
   std::lock_guard<std::mutex> lock2(safe_check_path_mtx_);
@@ -115,26 +128,20 @@ void SafetyManager::CheckTrajectoryTimer() {
   }
 }
 
-void SafetyManager::CheckCoordObs(const Vec2d& pt) {}
-
 void SafetyManager::CheckBoundingBoxesTimer() {
   const auto pointcloud =
       ModuleManager::GetInstance()->GetMapManager()->GetTransformedPointcloud();
 
-  auto stop_box = bouding_boxes_[BoundingBoxType::STOP];
-  auto creep_box = bouding_boxes_[BoundingBoxType::CREEP];
-  auto slow_down_box = bouding_boxes_[BoundingBoxType::SLOW_DOWN];
-
   for (auto& pt : pointcloud.points) {
-    if (stop_box.InBoundingBox(pt.x, pt.y)) {
+    if (stop_box_.InBoundingBox(pt.x, pt.y)) {
       ChangeVehicleSafetyState(SafetyStatus::STOP);
       return;
     }
-    if (creep_box.InBoundingBox(pt.x, pt.y)) {
+    if (creep_box_.InBoundingBox(pt.x, pt.y)) {
       ChangeVehicleSafetyState(SafetyStatus::CREEP);
       return;
     }
-    if (slow_down_box.InBoundingBox(pt.x, pt.y)) {
+    if (slow_down_box_.InBoundingBox(pt.x, pt.y)) {
       ChangeVehicleSafetyState(SafetyStatus::SLOW_DOWN);
       return;
     }

@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 13:20:47
+ * @Last Modified time: 2023-08-30 14:24:59
  */
 #include "map_manager.h"
 
@@ -100,10 +100,12 @@ void MapManager::GenerateGridMapTimer() {
   grid_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
 
   for (size_t i = 0; i < points_size; ++i) {
-    const int x = std::ceil(transformed_pointcloud_.points[i].x * res_inv_) +
-                  std::ceil(0.5 * width_);
-    const int y = std::ceil(transformed_pointcloud_.points[i].y * res_inv_) +
-                  std::ceil(0.5 * height_);
+    const int x =
+        std::round(transformed_pointcloud_.points[i].x * res_inv_ - 0.5) +
+        std::ceil(0.5 * width_);
+    const int y =
+        std::round(transformed_pointcloud_.points[i].y * res_inv_ - 0.5) +
+        std::ceil(0.5 * height_);
     grid_map_ptr_->SetOccupied(Vec2i(x, y));
   }
 }

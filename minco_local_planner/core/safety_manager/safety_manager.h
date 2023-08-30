@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:05:56
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 20:44:32
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-30 15:44:11
  */
 #include <stdint.h>
 
@@ -17,6 +17,8 @@
 #include "basis/trajectory.h"
 #include "bounding_box.h"
 #include "config_manager/config_data.h"
+#include "raycast.h"
+
 namespace minco_local_planner::safety_manager {
 using namespace config_manager;
 using namespace basis;
@@ -56,6 +58,9 @@ class SafetyManager : public BaseModule {
 
   void SetEndPoit(const Vec2d& end_pt) { end_pt_ = end_pt; }
 
+ 
+  bool CheckPose2dObs(const Pose2d& check_pt);
+
  private:
   void GenerateBoundingBoxes();
 
@@ -64,13 +69,14 @@ class SafetyManager : public BaseModule {
 
   void ChangeVehicleSafetyState(const SafetyStatus& new_status);
   void ChangePathSafetyState(const SafetyStatus& new_status);
-  void CheckCoordObs(const Vec2d& pt);
 
  private:
   SafetyManagerConfig cfg_;
   SafetyStatus vehicle_safety_status_;
   SafetyStatus path_safety_status_;
-  std::map<int, BoundingBox> bouding_boxes_;
+  std::map<int, BoundingBox> bouding_boxes_;  // 方便可视化
+  BoundingBox vehicle_box_, stop_box_, creep_box_, slow_down_box_;
+  Points2d vehicle_box_points_;
   Path2d safe_check_path_;
   Vec2d end_pt_;
   std::mutex safe_check_path_mtx_;

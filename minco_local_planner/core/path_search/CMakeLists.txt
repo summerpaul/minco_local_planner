@@ -1,0 +1,1 @@
+add_library(path_search kino_astar.cpp)
