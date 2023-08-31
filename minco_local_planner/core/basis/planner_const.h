@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 10:29:08
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-25 11:19:22
+ * @Last Modified time: 2023-08-31 10:36:23
  */
 #include <stdint.h>
 
@@ -11,33 +11,9 @@
 
 namespace minco_local_planner::basis {
 
-
-
-enum class TrackingStatus { NEW_PATH, NO_PATH, FAR_FROM_PATH, FOLLOWING, GOAL };
-
-enum class PlanStatus {
-  INIT,
-  GLOBAL_PLAN,
-  TRAJECTORY_OPT,
-  ROTATION_CAL,
-  ROTATION,
-  TRAJECTORY_TRACKING,
-  FAR_FROM_PATH,
-  STOP,
-  REACH_SEGMENT_END,
-  REACH_GOAL,
-  OPT_ERROR,
-  PATH_ERROR
-};
-
-enum class SafetyStatus {
-  SAFE,
-  SLOW_DOWN,
-  CREEP,
-  EMERGENCY_STOP,
-  REPLAN,
-  OVER_MAX_KAPPA
-};
+enum PathSearchType { ASTAR = 0, LAZY_THETA_ASTAR, KINO_ASTAR };
+enum TrajectoryOptimizerType { BSPLINE = 0, MINCO };
+enum TrajectoryTrackerType { PURE_PURSUIT = 0, LQR, MPC };
 
 }  // namespace minco_local_planner::basis
 

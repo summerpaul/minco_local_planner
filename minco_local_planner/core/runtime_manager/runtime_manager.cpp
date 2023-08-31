@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:51
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 13:19:54
+ * @Last Modified time: 2023-08-31 10:04:29
  */
 #include "runtime_manager.h"
 
@@ -29,6 +29,8 @@ bool RuntimeManager::Init() {
   scan_active_.store(false);
   pose_active_.store(false);
   twist_active_.store(false);
+  pose_t_ = scan_t_ = twist_t_ = GetTimeNowDouble();
+
   return true;
 }
 
@@ -77,10 +79,11 @@ void RuntimeManager::CheckRuntimeTimer() {
   const auto cur_t = GetTimeNowDouble();
   const auto vehicle_dt = cur_t - pose_t_;
   const auto laser_dt = cur_t - scan_t_;
+  // std::cout << "vehicle_dt is " << vehicle_dt << std::endl;
   const bool miss_pose =
-      (vehicle_dt > cfg_.message_wait_time && !pose_active_.load());
+      (vehicle_dt > cfg_.message_wait_time || !pose_active_.load());
   const bool miss_scan =
-      (laser_dt > cfg_.message_wait_time && !scan_active_.load());
+      (laser_dt > cfg_.message_wait_time || !scan_active_.load());
   if (miss_pose && miss_scan) {
     if (status_ != RuntimeStatus::MISS_ALL) {
       ChangeStatus(RuntimeStatus::MISS_ALL);

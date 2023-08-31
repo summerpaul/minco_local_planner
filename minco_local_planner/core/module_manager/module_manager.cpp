@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:46:03
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 19:55:43
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-08-31 09:50:14
  */
 #include "module_manager.h"
 
@@ -59,9 +59,15 @@ bool ModuleManager::Init(const std::string& config_file_path) {
       case InitStep::Init_SafetyManager: {
         safety_manager_ptr_.reset(new SafetyManager);
         init_flag = safety_manager_ptr_->Run();
-        init_flag ? ChangeInitStep(InitStep::Init_Done)
+        init_flag ? ChangeInitStep(InitStep::Init_PlanManager)
                   : ChangeInitStep(InitStep::Init_Failed);
       } break;
+      case InitStep::Init_PlanManager: {
+        plan_manager_ptr_.reset(new PlanManager);
+        init_flag = plan_manager_ptr_->Run();
+        init_flag ? ChangeInitStep(InitStep::Init_Done)
+                  : ChangeInitStep(InitStep::Init_Failed);
+      }
       case InitStep::Init_Done: {
         LOG_INFO("Init_Done");
         break;

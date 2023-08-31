@@ -5,4 +5,5 @@ target_link_libraries(module_manager
     runtime_manager
     map_manager
     safety_manager
+    plan_manager
     )
