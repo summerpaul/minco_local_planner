@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:43
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 18:36:39
+ * @Last Modified time: 2023-08-31 15:52:04
  */
 #include "config_manager.h"
 
@@ -38,6 +38,11 @@ bool ConfigManager::Init() {
   }
   if (!ParseSafetyManagerConfig(json_cfg["safety_manafger_cfg"])) {
     std::cout << "failed to ParseSafetyManagerConfig " << std::endl;
+    return false;
+  }
+
+  if (!ParsePlanManagerConfig(json_cfg["plan_manager_cfg"])) {
+    std::cout << "failed to ParsePlanManagerConfig " << std::endl;
     return false;
   }
 
@@ -91,7 +96,6 @@ bool ConfigManager::ParseRuntimeMangerConfig(
   }
   runtime_manager_cfg_.message_wait_time =
       runtime_manager_cfg_json["message_wait_time"].asDouble();
-  std::cout << "success to load runtime_manager_cfg_ " << std::endl;
   return true;
 }
 
@@ -307,6 +311,28 @@ bool ConfigManager::ParseSafetyManagerConfig(
   }
   safety_manager_cfg_.vehicle_width =
       safety_manager_cfg_json["vehicle_width"].asDouble();
+  return true;
+}
+
+bool ConfigManager::ParsePlanManagerConfig(
+    const Json::Value& plan_manager_cfg_json) {
+  if (plan_manager_cfg_json.type() == Json::nullValue) {
+    return false;
+  }
+
+  if (plan_manager_cfg_json["plan_sleep_time"].type() == Json::nullValue) {
+    return false;
+  }
+
+  plan_manager_cfg_.plan_sleep_time =
+      plan_manager_cfg_json["plan_sleep_time"].asDouble();
+
+  if (plan_manager_cfg_json["path_search_type"].type() == Json::nullValue) {
+    return false;
+  }
+  plan_manager_cfg_.path_search_type =
+      plan_manager_cfg_json["path_search_type"].asInt();
+
   return true;
 }
 }  // namespace minco_local_planner::config_manager

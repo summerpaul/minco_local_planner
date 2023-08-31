@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:55:34
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 08:57:29
+ * @Last Modified time: 2023-08-31 17:25:09
  */
 #include <stdint.h>
 
@@ -20,7 +20,7 @@ constexpr char IN_CLOSE_SET = 'a';
 constexpr char IN_OPEN_SET = 'b';
 constexpr char NOT_EXPAND = 'c';
 constexpr double inf = 1 >> 30;
-enum { REACH_END = 1, NO_PATH = 2 };
+enum { REACH_END = 1, NO_PATH, NO_MAP, START_ERR, END_ERR };
 
 // 搜索的节点
 struct PathNode {

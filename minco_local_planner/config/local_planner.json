@@ -45,5 +45,9 @@
         "stop_box_x_margin": 0.3,
         "stop_box_y_margin": 0.05,
         "dangerous_to_safe_counts": 20
+    },
+    "plan_manager_cfg": {
+        "plan_sleep_time": 0.1,
+        "path_search_type": 0
     }
 }

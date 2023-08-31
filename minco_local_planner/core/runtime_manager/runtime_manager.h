@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:47
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 09:52:25
+ * @Last Modified time: 2023-08-31 17:19:42
  */
 #include <stdint.h>
 
@@ -62,7 +62,6 @@ class RuntimeManager : public BaseModule {
   Twist2D cur_twist_;
   RuntimeStatus status_;
   config_manager::RuntimeMangerConfig cfg_;
-  std::atomic<bool> scan_active_, pose_active_, twist_active_;
 };
 }  // namespace minco_local_planner::runtime_manager
 

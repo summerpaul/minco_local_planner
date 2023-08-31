@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 08:57:35
+ * @Last Modified time: 2023-08-31 17:29:00
  */
 #include <stdint.h>
 
@@ -28,13 +28,14 @@ class PathSearch : public BaseModule {
   //   设置规划的地图
   void SetMap(const GridMap::Ptr& map) { map_ptr_ = map; }
   // carlike 混合A星使用
-  virtual int Search(const VehiclePose& start_pos, const Vec2d& init_ctrl,
-                     const VehiclePose& end_pos) = 0;
-  //  A星使用
-  virtual int Search(const VehiclePose& start_pos,
-                     const VehiclePose& end_pos) = 0;
+  virtual int Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
+                     const Vec2d& init_ctrl) = 0;
+
   // 重置数据
   virtual void Reset() = 0;
+
+ protected:
+  virtual bool CheckVehiclePose(const VehiclePose& pose) = 0;
 
  protected:
   GridMap::Ptr map_ptr_;
