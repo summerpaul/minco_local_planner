@@ -1,14 +1,15 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:29:22
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-31 21:04:50
  */
 #include <stdint.h>
 
 #ifndef __ASTAR_H__
 #define __ASTAR_H__
 #include "path_search.h"
+
 namespace minco_local_planner::path_search {
 class Astar : public PathSearch {
  public:
@@ -23,10 +24,18 @@ class Astar : public PathSearch {
   virtual void Stop() override;
 
  protected:
-  bool CheckVehiclePose(const VehiclePose& pose);
+  // bool CheckVehiclePose(const VehiclePose& pose);
+ private:
+  double GetEuclHeu(const Vec2d& x1, const Vec2d& x2,
+                    const double& tie_breaker = 1.01);
+  double GetDiagHeu(const Vec2d& x1, const Vec2d& x2,
+                    const double& tie_breaker = 1.01);
+  double GetManhHeu(const Vec2d& x1, const Vec2d& x2,
+                    const double& tie_breaker = 1.01);
 
  private:
   vec_Vec2i motions_;
+  AstarConfig cfg_;
 };
 }  // namespace minco_local_planner::path_search
 

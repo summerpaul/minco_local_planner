@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 14:58:07
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-31 21:03:06
  */
 #include <stdint.h>
 
@@ -63,6 +63,12 @@ struct SafetyManagerConfig {
 struct PlanManagerConfig {
   double plan_sleep_time = 0.1;
   int path_search_type = 0;  // 0 :ASTAR, 1:LAZY_THETA_ASTAR,2:KINO_ASTAR
+};
+
+struct AstarConfig {
+  double lambda_heu = 5;
+  int allocate_num = 100000;
+  double time_breaker = 1.0001;
 };
 
 struct PathSearchConfig {
