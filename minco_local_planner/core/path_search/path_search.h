@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:29:00
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-08-31 21:47:03
  */
 #include <stdint.h>
 
@@ -15,6 +15,7 @@
 #include "config_manager/config_data.h"
 #include "map_manager/grid_map.h"
 #include "type.h"
+
 namespace minco_local_planner::path_search {
 using namespace basis;
 using namespace map_manager;
@@ -35,7 +36,7 @@ class PathSearch : public BaseModule {
   virtual void Reset() = 0;
 
  protected:
-  virtual bool CheckVehiclePose(const VehiclePose& pose) = 0;
+  // virtual bool CheckVehiclePose(const VehiclePose& pose) = 0;
 
  protected:
   GridMap::Ptr map_ptr_;
