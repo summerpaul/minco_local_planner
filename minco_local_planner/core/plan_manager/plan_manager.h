@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:47:53
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 15:45:29
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-01 23:36:02
  */
 #include <stdint.h>
 
@@ -48,6 +48,8 @@ class PlanManager : public BaseModule {
   // 用于全局规划
   void SetTargetPose(const VehiclePose &pose);
 
+  const Path2d &GetGlobalPath() const { return global_path_; }
+
  private:
   void ReplanFSMTimer();
 
@@ -60,6 +62,7 @@ class PlanManager : public BaseModule {
   VehiclePose target_pose_;
   PathSearch::Ptr path_search_ptr_;  // 全局路径规划器
   PlanManagerConfig cfg_;
+  Path2d global_path_;
 };
 }  // namespace minco_local_planner::plan_manager
 

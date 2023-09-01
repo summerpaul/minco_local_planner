@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 10:18:00
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-01 23:46:01
  */
 #include "demo.h"
 
@@ -172,4 +172,9 @@ void Demo::VisTimer() {
     bezier_segments_.GetAllControlPoints(control_points);
     visualizer_.BezierSegmentsVis(bezier_path, control_points);
   }
+
+  const Path2d global_path =
+      ModuleManager::GetInstance()->GetPlanManager()->GetGlobalPath();
+
+  visualizer_.GlobalPathVis(global_path);
 }

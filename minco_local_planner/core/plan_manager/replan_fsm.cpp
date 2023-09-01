@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 19:58:32
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 10:42:19
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-01 23:47:41
  */
 #include <iostream>
 
@@ -30,8 +30,22 @@ void PlanManager::ReplanFSMTimer() {
   }
 
   switch (status_) {
-    case PlanStatus::INIT:
-    case PlanStatus::GLOBAL_PLAN:
+    case PlanStatus::INIT: {
+    } break;
+    case PlanStatus::GLOBAL_PLAN: {
+      const VehiclePose cur_pose =
+          ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
+      path_search_ptr_->Reset();
+      auto flag =
+          path_search_ptr_->Search(cur_pose, target_pose_, Vec2d::Zero());
+      std::cout << "flag is " << int(flag) << std::endl;
+      if (flag != REACH_END) {
+        ChangePlanStatus(PlanStatus::PATH_ERROR);
+      } else {
+        path_search_ptr_->GetPath2D(global_path_);
+        ChangePlanStatus(PlanStatus::TRAJECTORY_OPT);
+      }
+    } break;
     case PlanStatus::TRAJECTORY_OPT:
     case PlanStatus::ROTATION_CAL:
     case PlanStatus::ROTATION:

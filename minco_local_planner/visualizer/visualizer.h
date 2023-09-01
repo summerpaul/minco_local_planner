@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:28
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 18:58:10
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-01 23:42:50
  */
 #include <stdint.h>
 
@@ -10,6 +10,7 @@
 #define __VISUALIZER_H__
 #include <geometry_msgs/Polygon.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -41,6 +42,7 @@ class Visualizer {
   void BezierSegmentsVis(const Path2d &bezier_segment_path,
                          const Points2d &all_control_points,
                          const std::string &frame_id = "odom");
+  void GlobalPathVis(const Path2d &path, const std::string &frame_id = "odom");
 
  private:
   ros::NodeHandle nh_;
@@ -49,6 +51,7 @@ class Visualizer {
   ros::Publisher transformed_pcd_pub_;
   ros::Publisher safety_bounding_boxes_pub_;
   ros::Publisher bezier_segments_pub_;
+  ros::Publisher global_path_pub_;
 };
 }  // namespace visualizer
 

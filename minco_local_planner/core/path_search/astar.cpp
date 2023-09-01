@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:47
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:51:28
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-01 23:22:41
  */
 #include <iostream>
 
@@ -60,7 +60,7 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
   if (map_ptr_->IsOccupied(end_pn)) {
     return END_ERR;
   }
-  end_pt_ = end_pt;
+  end_pt_ = end_pt.head(2);
   PathNodePtr cur_node = path_node_pool_[0];
   cur_node->pose = start_pt;
   cur_node->parent = nullptr;
@@ -181,7 +181,7 @@ double Astar::GetManhHeu(const Vec2d& x1, const Vec2d& x2,
 void Astar::GetPath2D(Path2d& path) {
   path.clear();
   for (size_t i = 0; i < path_nodes_.size(); ++i) {
-    path.emplace_back(path_nodes_[i]->pos);
+    path.emplace_back(path_nodes_[i]->pose.head(2));
   }
   path.emplace_back(end_pt_);
 }

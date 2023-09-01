@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 22:42:10
+ * @Last Modified time: 2023-09-01 23:41:11
  */
 #include "visualizer.h"
 
@@ -52,6 +52,7 @@ Visualizer::Visualizer() {
       "safety_bounding_boxes", 1);
   bezier_segments_pub_ =
       nh_.advertise<visualization_msgs::MarkerArray>("bezier_segments", 1);
+  global_path_pub_ = nh_.advertise<nav_msgs::Path>("global_path", 1);
 }
 
 void Visualizer::LocalGridMapVis(const Pose2d &origin, const Vec2i &dim,
@@ -135,5 +136,23 @@ void Visualizer::BezierSegmentsVis(const Path2d &bezier_segment_path,
   bezier_segments_vis.markers.emplace_back(bezier_path_vis);
   bezier_segments_vis.markers.emplace_back(bezier_control_points_vis);
   bezier_segments_pub_.publish(bezier_segments_vis);
+}
+
+void Visualizer::GlobalPathVis(const Path2d &path,
+                               const std::string &frame_id) {
+  nav_msgs::Path path_vis;
+  path_vis.header.frame_id = frame_id;
+  if (path.size() == 0) {
+    global_path_pub_.publish(path_vis);
+    return;
+  }
+  geometry_msgs::PoseStamped pose;
+  pose.pose.position.z = 0;
+  for (auto &pt : path) {
+    pose.pose.position.x = pt.x();
+    pose.pose.position.y = pt.y();
+    path_vis.poses.emplace_back(pose);
+  }
+  global_path_pub_.publish(path_vis);
 }
 }  // namespace visualizer
