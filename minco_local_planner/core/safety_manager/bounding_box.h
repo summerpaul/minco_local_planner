@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:01:28
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 19:42:07
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-01 09:30:39
  */
 #include <stdint.h>
 
@@ -51,11 +51,12 @@ class BoundingBox {
 
   Points2d GetPoints() const {
     Points2d points;
-    points.emplace_back(Vec2d(xmin_, ymin_));
-    points.emplace_back(Vec2d(xmin_, ymax_));
+    // 使用逆时针获取
     points.emplace_back(Vec2d(xmax_, ymax_));
     points.emplace_back(Vec2d(xmax_, ymin_));
     points.emplace_back(Vec2d(xmin_, ymin_));
+    points.emplace_back(Vec2d(xmin_, ymax_));
+    points.emplace_back(Vec2d(xmax_, ymax_));
     return points;
   }
   const std::string Name() const { return name_; }

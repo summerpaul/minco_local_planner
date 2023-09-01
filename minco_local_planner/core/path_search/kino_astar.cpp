@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:36
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:30:19
+ * @Last Modified time: 2023-09-01 09:24:22
  */
 #include "kino_astar.h"
 
@@ -12,7 +12,6 @@ using namespace std;
 namespace minco_local_planner::path_search {
 
 KinoAstar::KinoAstar() : PathSearch("KinoAstar") {}
-
 
 bool KinoAstar::Init() { return true; }
 bool KinoAstar::Start() { return true; }
@@ -24,7 +23,6 @@ int KinoAstar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
     return NO_MAP;
   }
 
-  
   return NO_PATH;
 }
 

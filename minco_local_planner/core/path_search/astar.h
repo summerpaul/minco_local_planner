@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-31 21:04:50
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-01 09:13:57
  */
 #include <stdint.h>
 
@@ -14,6 +14,7 @@ namespace minco_local_planner::path_search {
 class Astar : public PathSearch {
  public:
   Astar();
+  ~Astar();
   virtual int Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
                      const Vec2d& init_ctrl) override;
 
@@ -32,6 +33,8 @@ class Astar : public PathSearch {
                     const double& tie_breaker = 1.01);
   double GetManhHeu(const Vec2d& x1, const Vec2d& x2,
                     const double& tie_breaker = 1.01);
+
+  void RetrievePath(PathNodePtr end_node);
 
  private:
   vec_Vec2i motions_;
