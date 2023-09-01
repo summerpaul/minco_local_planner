@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:30
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 14:48:02
+ * @Last Modified time: 2023-09-01 18:47:26
  */
 #include <stdint.h>
 
@@ -23,6 +23,7 @@ class KinoAstar : public PathSearch {
   virtual bool Init() override;
   virtual bool Start() override;
   virtual void Stop() override;
+  virtual void GetPath2D(Path2d& path) override;
 
  private:
   Points2d car_vertex_;

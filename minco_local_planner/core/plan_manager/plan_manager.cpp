@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:48:06
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:13:54
+ * @Last Modified time: 2023-09-01 18:52:29
  */
 #include "plan_manager.h"
 
@@ -34,6 +34,8 @@ bool PlanManager::Init() {
     LOG_ERROR("fail to run path_search_ptr_");
     return false;
   }
+  path_search_ptr_->SetMap(
+      ModuleManager::GetInstance()->GetMapManager()->GetGlobalMap());
 
   return true;
 }

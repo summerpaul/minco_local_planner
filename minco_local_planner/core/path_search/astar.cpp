@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:47
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 09:23:35
+ * @Last Modified time: 2023-09-01 18:51:28
  */
 #include <iostream>
 
@@ -29,8 +29,8 @@ Astar::~Astar() {
 bool Astar::Init() {
   using namespace module_manager;
   cfg_ = ModuleManager::GetInstance()->GetConfigManager()->GetAstarConfig();
-
   path_node_pool_.resize(cfg_.allocate_num);
+
   for (int i = 0; i < cfg_.allocate_num; i++) {
     path_node_pool_[i] = new PathNode;
   }
@@ -60,6 +60,7 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
   if (map_ptr_->IsOccupied(end_pn)) {
     return END_ERR;
   }
+  end_pt_ = end_pt;
   PathNodePtr cur_node = path_node_pool_[0];
   cur_node->pose = start_pt;
   cur_node->parent = nullptr;
@@ -177,7 +178,13 @@ double Astar::GetManhHeu(const Vec2d& x1, const Vec2d& x2,
   double dy = fabs(x1(1) - x2(1));
   return tie_breaker * (dx + dy);
 }
-
+void Astar::GetPath2D(Path2d& path) {
+  path.clear();
+  for (size_t i = 0; i < path_nodes_.size(); ++i) {
+    path.emplace_back(path_nodes_[i]->pos);
+  }
+  path.emplace_back(end_pt_);
+}
 // bool Astar::CheckVehiclePose(const VehiclePose& pose) {}
 
 }  // namespace minco_local_planner::path_search

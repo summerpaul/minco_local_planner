@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 09:13:57
+ * @Last Modified time: 2023-09-01 18:50:16
  */
 #include <stdint.h>
 
@@ -23,6 +23,7 @@ class Astar : public PathSearch {
   virtual bool Init() override;
   virtual bool Start() override;
   virtual void Stop() override;
+  virtual void GetPath2D(Path2d& path) override;
 
  protected:
   // bool CheckVehiclePose(const VehiclePose& pose);
@@ -38,6 +39,7 @@ class Astar : public PathSearch {
 
  private:
   vec_Vec2i motions_;
+  Vec2d end_pt_;
   AstarConfig cfg_;
 };
 }  // namespace minco_local_planner::path_search

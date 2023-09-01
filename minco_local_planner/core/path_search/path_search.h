@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-31 21:47:03
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-01 18:47:10
  */
 #include <stdint.h>
 
@@ -34,6 +34,8 @@ class PathSearch : public BaseModule {
 
   // 重置数据
   virtual void Reset() = 0;
+
+  virtual void GetPath2D(Path2d& path) = 0;
 
  protected:
   // virtual bool CheckVehiclePose(const VehiclePose& pose) = 0;
