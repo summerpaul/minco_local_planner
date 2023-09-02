@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:47:53
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-01 23:36:02
+ * @Last Modified time: 2023-09-02 09:53:44
  */
 #include <stdint.h>
 
@@ -61,7 +61,7 @@ class PlanManager : public BaseModule {
   PlanStatus status_;
   VehiclePose target_pose_;
   PathSearch::Ptr path_search_ptr_;  // 全局路径规划器
-  PlanManagerConfig cfg_;
+  PlanManagerConfig::Ptr cfg_;
   Path2d global_path_;
 };
 }  // namespace minco_local_planner::plan_manager

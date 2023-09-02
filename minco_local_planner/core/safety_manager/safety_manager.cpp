@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:06:01
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 16:27:25
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:54:59
  */
 #include "safety_manager.h"
 
@@ -38,23 +38,23 @@ bool SafetyManager::Start() {
 void SafetyManager::Stop() {}
 
 void SafetyManager::GenerateBoundingBoxes() {
-  const auto y_min = -0.5 * cfg_.vehicle_width;
-  const auto y_max = 0.5 * cfg_.vehicle_width;
-  const auto x_min = -cfg_.back_to_center;
-  const auto x_max = cfg_.vehicle_length - cfg_.back_to_center;
+  const auto y_min = -0.5 * cfg_->vehicle_width;
+  const auto y_max = 0.5 * cfg_->vehicle_width;
+  const auto x_min = -cfg_->back_to_center;
+  const auto x_max = cfg_->vehicle_length - cfg_->back_to_center;
   vehicle_box_ = BoundingBox(x_min, x_max, y_min, y_max, "vehicle");
   vehicle_box_points_ = vehicle_box_.GetPoints();
   bouding_boxes_[BoundingBoxType::VEHICLE] = vehicle_box_;
-  stop_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_.stop_box_x_margin,
-                          cfg_.stop_box_y_margin, "stop");
+  stop_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_->stop_box_x_margin,
+                          cfg_->stop_box_y_margin, "stop");
   bouding_boxes_[BoundingBoxType::STOP] = stop_box_;
 
-  creep_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_.creep_box_x_margin,
-                           cfg_.creep_box_y_margin, "creep");
+  creep_box_ = BoundingBox(x_min, x_max, y_min, y_max, cfg_->creep_box_x_margin,
+                           cfg_->creep_box_y_margin, "creep");
   bouding_boxes_[BoundingBoxType::CREEP] = creep_box_;
   slow_down_box_ =
-      BoundingBox(x_min, x_max, y_min, y_max, cfg_.slow_down_box_x_margin,
-                  cfg_.slow_down_box_y_margin, "slow_down");
+      BoundingBox(x_min, x_max, y_min, y_max, cfg_->slow_down_box_x_margin,
+                  cfg_->slow_down_box_y_margin, "slow_down");
   bouding_boxes_[BoundingBoxType::SLOW_DOWN] = slow_down_box_;
 }
 
@@ -99,14 +99,14 @@ void SafetyManager::CheckTrajectoryTimer() {
     safe_check_path.emplace_back(check_pose);
     const auto cur_kappa = std::fabs(it->GetKappa());
     // 检查轨迹的曲率
-    if (IsLarge(cur_kappa, cfg_.max_kappa)) {
+    if (IsLarge(cur_kappa, cfg_->max_kappa)) {
       if (path_safety_status_ != SafetyStatus::OVER_MAX_KAPPA) {
         ChangePathSafetyState(SafetyStatus::OVER_MAX_KAPPA);
       }
       return;
     }
     // 安全检查范围内都内安全
-    if (IsLarge(check_length, cfg_.safe_check_path_length)) {
+    if (IsLarge(check_length, cfg_->safe_check_path_length)) {
       if (path_safety_status_ != SafetyStatus::SAFE) {
         ChangePathSafetyState(SafetyStatus::SAFE);
       }
@@ -152,7 +152,7 @@ void SafetyManager::ChangeVehicleSafetyState(const SafetyStatus& new_status) {
              safety_status_str_[cur_s]);
   } else if ((pre_s - cur_s) >= 1) {
     dangerous_to_safe_counts++;
-    if (dangerous_to_safe_counts > cfg_.dangerous_to_safe_counts) {
+    if (dangerous_to_safe_counts > cfg_->dangerous_to_safe_counts) {
       cur_s = pre_s - 1;
 
       vehicle_safety_status_ = SafetyStatus(cur_s);

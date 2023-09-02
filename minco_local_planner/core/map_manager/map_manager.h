@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:19
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 19:15:07
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:52:12
  */
 #include <stdint.h>
 
@@ -65,7 +65,7 @@ class MapManager : public BaseModule {
   bool b_have_local_map_ = false;
   bool b_have_global_map_ = false;
   std::vector<int8_t> global_map_data_;  // 用于存储静态地图的数据
-  MapManagerConfig cfg_;
+  MapManagerConfig::Ptr cfg_;
   std::mutex transformed_pointcloud_mutex_;
   PointCloud3d transformed_pointcloud_;  // 使用外参标定后的点云地图，用于停障
   Pose2d base_to_laser_;

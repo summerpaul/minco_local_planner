@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:50:16
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:53:18
  */
 #include <stdint.h>
 
@@ -28,6 +28,8 @@ class Astar : public PathSearch {
  protected:
   // bool CheckVehiclePose(const VehiclePose& pose);
  private:
+  double GetHeu(const Vec2d& x1, const Vec2d& x2,
+                const double& tie_breaker = 1.01);
   double GetEuclHeu(const Vec2d& x1, const Vec2d& x2,
                     const double& tie_breaker = 1.01);
   double GetDiagHeu(const Vec2d& x1, const Vec2d& x2,
@@ -40,7 +42,7 @@ class Astar : public PathSearch {
  private:
   vec_Vec2i motions_;
   Vec2d end_pt_;
-  AstarConfig cfg_;
+  AstarConfig::Ptr cfg_;
 };
 }  // namespace minco_local_planner::path_search
 

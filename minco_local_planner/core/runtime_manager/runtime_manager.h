@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:47
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:19:42
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:54:36
  */
 #include <stdint.h>
 
@@ -61,7 +61,7 @@ class RuntimeManager : public BaseModule {
   VehiclePose cur_pos_;
   Twist2D cur_twist_;
   RuntimeStatus status_;
-  config_manager::RuntimeMangerConfig cfg_;
+  config_manager::RuntimeMangerConfig::Ptr cfg_;
 };
 }  // namespace minco_local_planner::runtime_manager
 

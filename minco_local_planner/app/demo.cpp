@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-01 23:46:01
+ * @Last Modified time: 2023-09-02 09:34:21
  */
 #include "demo.h"
 
@@ -44,9 +44,13 @@ void Demo::InitRos() {
 
   cancel_sub_ =
       nh_.subscribe("cancel_navi", 50, &Demo::CancelNaviCallback, this);
+
+  reload_config_sub_ =
+      nh_.subscribe("reload_config", 50, &Demo::ReloadConfigCallback, this);
 }
 
 bool Demo::InitPlanner() {
+  ROS_INFO("start InitPlanner");
   bool flag = ModuleManager::GetInstance()->Init(config_file_path_);
   return flag;
 }
@@ -138,6 +142,11 @@ void Demo::CancelNaviCallback(const std_msgs::Empty::ConstPtr &msg) {
 }
 void Demo::StartNaviCallback(const std_msgs::Empty::ConstPtr &msg) {
   std::cout << "start navigation " << std::endl;
+}
+
+void Demo::ReloadConfigCallback(const std_msgs::Empty::ConstPtr &msg) {
+  ModuleManager::GetInstance()->GetConfigManager()->ParseConfig();
+  ROS_INFO("reload config ");
 }
 
 void Demo::VisTimer() {

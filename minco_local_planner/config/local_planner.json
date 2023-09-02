@@ -49,5 +49,11 @@
     "plan_manager_cfg": {
         "plan_sleep_time": 0.1,
         "path_search_type": 0
+    },
+    "astar_cfg": {
+        "lambda_heu": 5.0,
+        "allocate_num": 100000,
+        "time_breaker": 1.0001,
+        "heu_type": 2
     }
 }

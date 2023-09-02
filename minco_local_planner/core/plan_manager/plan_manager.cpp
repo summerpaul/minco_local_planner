@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:48:06
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:52:29
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:58:00
  */
 #include "plan_manager.h"
 
@@ -25,7 +25,7 @@ bool PlanManager::Init() {
   cfg_ =
       ModuleManager::GetInstance()->GetConfigManager()->GetPlanManagerConfig();
   path_search_ptr_ =
-      PlannerFactory::GetInstance()->CreatGlobalPlanner(cfg_.path_search_type);
+      PlannerFactory::GetInstance()->CreatGlobalPlanner(cfg_->path_search_type);
   if (!path_search_ptr_) {
     LOG_ERROR("path_search_ptr_ is null ");
     return false;
@@ -42,7 +42,7 @@ bool PlanManager::Init() {
 bool PlanManager::Start() {
   using namespace utils;
   Singleton<TimerManager>()->Schedule(
-      int(100), std::bind(&PlanManager::ReplanFSMTimer, this));
+      int(cfg_->plan_sleep_time*1000), std::bind(&PlanManager::ReplanFSMTimer, this));
   return true;
 }
 void PlanManager::Stop() {

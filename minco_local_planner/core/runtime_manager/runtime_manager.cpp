@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 17:23:51
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 17:23:14
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:54:40
  */
 #include "runtime_manager.h"
 
@@ -34,7 +34,7 @@ bool RuntimeManager::Init() {
 bool RuntimeManager::Start() {
   using namespace utils;
   Singleton<TimerManager>()->Schedule(
-      int(cfg_.check_sleep_time * 1000),
+      int(cfg_->check_sleep_time * 1000),
       std::bind(&RuntimeManager::CheckRuntimeTimer, this));
 
   return true;
@@ -77,8 +77,8 @@ void RuntimeManager::CheckRuntimeTimer() {
   const auto vehicle_dt = cur_t - pose_t_;
   const auto laser_dt = cur_t - scan_t_;
   // std::cout << "vehicle_dt is " << vehicle_dt << std::endl;
-  const bool miss_pose = (vehicle_dt > cfg_.message_wait_time);
-  const bool miss_scan = (laser_dt > cfg_.message_wait_time);
+  const bool miss_pose = (vehicle_dt > cfg_->message_wait_time);
+  const bool miss_scan = (laser_dt > cfg_->message_wait_time);
   if (miss_pose && miss_scan) {
     ChangeStatus(RuntimeStatus::MISS_ALL);
   } else if (miss_pose && !miss_scan) {

@@ -2,8 +2,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-01-06 13:35:19
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-05-29 17:25:08
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:22:39
  */
 #ifndef MULTI_NAVI_GOAL_PANEL_H
 #define MULTI_NAVI_GOAL_PANEL_H
@@ -96,6 +96,7 @@ namespace navi_multi_goals_pub_rviz_plugin
     QPushButton *output_cancel_button_;      // 取消的按钮
     QPushButton *out_draw_roadmap_button_; 
     QPushButton *out_set_cycle_times_button_;
+    
 
     QTableWidget *poseArray_table_; // 显示关键点的table
     QTableWidget *laneArray_table_; // 显示路段的table

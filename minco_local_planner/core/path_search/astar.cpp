@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:47
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-01 23:22:41
+ * @Last Modified time: 2023-09-02 09:53:28
  */
 #include <iostream>
 
@@ -22,16 +22,16 @@ Astar::Astar() : PathSearch("Astar") {
   motions_.emplace_back(Vec2i(1, 1));
 }
 Astar::~Astar() {
-  for (int i = 0; i < cfg_.allocate_num; i++) {
+  for (int i = 0; i < cfg_->allocate_num; i++) {
     delete path_node_pool_[i];
   }
 }
 bool Astar::Init() {
   using namespace module_manager;
   cfg_ = ModuleManager::GetInstance()->GetConfigManager()->GetAstarConfig();
-  path_node_pool_.resize(cfg_.allocate_num);
+  path_node_pool_.resize(cfg_->allocate_num);
 
-  for (int i = 0; i < cfg_.allocate_num; i++) {
+  for (int i = 0; i < cfg_->allocate_num; i++) {
     path_node_pool_[i] = new PathNode;
   }
   use_node_num_ = 0;
@@ -67,9 +67,8 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
   cur_node->index = start_pn;
   cur_node->g_score = 0;
   cur_node->f_score =
-      cfg_.lambda_heu * GetEuclHeu(Vec2d(start_pn[0], start_pn[1]),
-                                   Vec2d(end_pn[0], end_pn[1]),
-                                   cfg_.time_breaker);
+      cfg_->lambda_heu * GetHeu(Vec2d(start_pn[0], start_pn[1]),
+                               Vec2d(end_pn[0], end_pn[1]), cfg_->time_breaker);
   cur_node->node_state = IN_OPEN_SET;
   open_set_.push(cur_node);
   use_node_num_ += 1;
@@ -98,10 +97,9 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
       if (neighbor != nullptr && neighbor->node_state == IN_CLOSE_SET) continue;
       double tmp_g = Vec2d(motion[0], motion[1]).norm() + cur_node->g_score;
       double tmp_f =
-          tmp_g +
-          cfg_.lambda_heu * GetEuclHeu(Vec2d(neighbor_pn[0], neighbor_pn[1]),
-                                       Vec2d(end_pn[0], end_pn[1]),
-                                       cfg_.time_breaker);
+          tmp_g + cfg_->lambda_heu *
+                      GetHeu(Vec2d(neighbor_pn[0], neighbor_pn[1]),
+                             Vec2d(end_pn[0], end_pn[1]), cfg_->time_breaker);
 
       if (neighbor == nullptr) {
         neighbor = path_node_pool_[use_node_num_];
@@ -114,7 +112,7 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
         open_set_.push(neighbor);
         expanded_nodes_.insert(neighbor_pn, neighbor);
         use_node_num_ += 1;
-        if (use_node_num_ == cfg_.allocate_num) {
+        if (use_node_num_ == cfg_->allocate_num) {
           LOG_WARN("run out of memory.");
           return NO_PATH;
         }
@@ -157,6 +155,19 @@ void Astar::Reset() {
 
   use_node_num_ = 0;
   iter_num_ = 0;
+}
+
+double Astar::GetHeu(const Vec2d& x1, const Vec2d& x2,
+                     const double& tie_breaker) {
+  if (cfg_->heu_type == 1) {
+    return GetEuclHeu(x1, x2, tie_breaker);
+  }
+
+  else if (cfg_->heu_type == 2) {
+    return GetManhHeu(x1, x2, tie_breaker);
+  } else {
+    return GetDiagHeu(x1, x2, tie_breaker);
+  }
 }
 
 double Astar::GetEuclHeu(const Vec2d& x1, const Vec2d& x2,

@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-31 21:03:51
+ * @Last Modified time: 2023-09-02 09:55:29
  */
 #include <stdint.h>
 
@@ -32,26 +32,28 @@ class ConfigManager : public BaseModule {
   virtual bool Start() override;
   virtual void Stop() override;
 
- public:
-  const LogConfig& GetLogConfig() const { return log_cfg_; }
+  bool ParseConfig();
 
-  const RuntimeMangerConfig& GetRuntimeMangerConfig() const {
+ public:
+  const LogConfig::Ptr GetLogConfig() const { return log_cfg_; }
+
+  const RuntimeMangerConfig::Ptr GetRuntimeMangerConfig() const {
     return runtime_manager_cfg_;
   }
 
-  const MapManagerConfig& GetMapManagerConfig() const {
+  const MapManagerConfig::Ptr GetMapManagerConfig() const {
     return map_manager_cfg_;
   }
 
-  const SafetyManagerConfig& GetSafetyManagerConfig() const {
+  const SafetyManagerConfig::Ptr GetSafetyManagerConfig() const {
     return safety_manager_cfg_;
   }
 
-  const PlanManagerConfig& GetPlanManagerConfig() const {
+  const PlanManagerConfig::Ptr GetPlanManagerConfig() const {
     return plan_manager_cfg_;
   }
 
-  const AstarConfig& GetAstarConfig() const { return astar_cfg_; }
+  const AstarConfig::Ptr GetAstarConfig() const { return astar_cfg_; }
 
  private:
   bool ParseLogConfig(const Json::Value& log_cfg_json);
@@ -60,14 +62,17 @@ class ConfigManager : public BaseModule {
   bool ParseSafetyManagerConfig(const Json::Value& safety_manager_cfg_json);
   bool ParsePlanManagerConfig(const Json::Value& plan_manager_cfg_json);
 
+  // 算法相关
+  bool ParseAstarConfig(const Json::Value& astar_cfg_json);
+
  private:
   std::string config_file_path_;
-  LogConfig log_cfg_;
-  RuntimeMangerConfig runtime_manager_cfg_;
-  MapManagerConfig map_manager_cfg_;
-  SafetyManagerConfig safety_manager_cfg_;
-  PlanManagerConfig plan_manager_cfg_;
-  AstarConfig astar_cfg_;
+  LogConfig::Ptr log_cfg_;
+  RuntimeMangerConfig::Ptr runtime_manager_cfg_;
+  MapManagerConfig::Ptr map_manager_cfg_;
+  SafetyManagerConfig::Ptr safety_manager_cfg_;
+  PlanManagerConfig::Ptr plan_manager_cfg_;
+  AstarConfig::Ptr astar_cfg_;
 };
 }  // namespace minco_local_planner::config_manager
 

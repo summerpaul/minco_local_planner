@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 20:05:56
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 18:13:48
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:54:54
  */
 #include <stdint.h>
 
@@ -67,7 +67,7 @@ class SafetyManager : public BaseModule {
   void ChangePathSafetyState(const SafetyStatus& new_status);
 
  private:
-  SafetyManagerConfig cfg_;
+  SafetyManagerConfig::Ptr cfg_;
   SafetyStatus vehicle_safety_status_;
   SafetyStatus path_safety_status_;
   std::map<int, BoundingBox> bouding_boxes_;  // 方便可视化

@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:46:03
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-31 09:50:14
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:53:04
  */
 #include "module_manager.h"
 
@@ -33,10 +33,10 @@ bool ModuleManager::Init(const std::string& config_file_path) {
       } break;
       // step2 初始化日志
       case InitStep::Init_Log: {
-        const LogConfig log_cfg = config_manager_ptr_->GetLogConfig();
+        const auto log_cfg = config_manager_ptr_->GetLogConfig();
         if (!Logger::GetInstance()->GetInitFlag()) {
-          Logger::GetInstance()->Init(log_cfg.log_path, "sunny_local_planner",
-                                      log_cfg.log_level, log_cfg.log_type);
+          Logger::GetInstance()->Init(log_cfg->log_path, "sunny_local_planner",
+                                      log_cfg->log_level, log_cfg->log_type);
 
           LOG_INFO("START_LOCAL_PLANNER_LOG---------------");
         }

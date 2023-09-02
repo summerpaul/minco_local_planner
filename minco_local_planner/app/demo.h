@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:15
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-08-30 11:05:20
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 09:32:04
  */
 #include <stdint.h>
 
@@ -39,7 +39,7 @@ class Demo {
   void LoadRoadmapCallback(const std_msgs::Empty::ConstPtr &msg);
   void StartNaviCallback(const std_msgs::Empty::ConstPtr &msg);
   void CancelNaviCallback(const std_msgs::Empty::ConstPtr &msg);
-
+  void ReloadConfigCallback(const std_msgs::Empty::ConstPtr &msg);
 
   void VisTimer();
 
@@ -56,6 +56,7 @@ class Demo {
   ros::Publisher cmd_pub_;
   ros::Subscriber load_map_sub_;
   ros::Subscriber start_navi_sub_;
+  ros::Subscriber reload_config_sub_;
   ros::Timer vis_timer_;
 
   visualizer::Visualizer visualizer_;

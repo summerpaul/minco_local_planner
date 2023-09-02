@@ -2,27 +2,30 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-31 21:03:06
+ * @Last Modified time: 2023-09-02 09:48:58
  */
 #include <stdint.h>
 
 #ifndef __CONFIG_DATA_H__
 #define __CONFIG_DATA_H__
+#include <memory>
 #include <string>
-
 namespace minco_local_planner::config_manager {
 struct LogConfig {
+  typedef std::shared_ptr<LogConfig> Ptr;
   std::string log_path = "/root/log";  // 日志文件目录
   int log_type = 0;   // 日志类型，0：console_only 1:file_only 2:both
   int log_level = 0;  // 日志等级
 };
 
 struct RuntimeMangerConfig {
+  typedef std::shared_ptr<RuntimeMangerConfig> Ptr;
   double check_sleep_time = 0.1;   // 检查数据异常的频率
   double message_wait_time = 0.5;  //   数据异常的时间间隔
 };
 
 struct MapManagerConfig {
+  typedef std::shared_ptr<MapManagerConfig> Ptr;
   std::string pcd_map_path = "/root/locate/laser_kc.pcd";  // 点云文件地址
   double map_generate_time = 0.1;   // 地图生成时间间隔
   double down_sampling_res = 0.05;  // 点云数据降采样分辨率 单位m
@@ -41,6 +44,7 @@ struct MapManagerConfig {
 };
 // 安全管理配置
 struct SafetyManagerConfig {
+  typedef std::shared_ptr<SafetyManagerConfig> Ptr;
   double safe_check_path_length = 3.0;  //   安全检车路径的长度
   double safe_check_sleep_time = 0.1;   //   检查安全路径的时间间隔
   double emergency_stop_length = 0.5;   //   紧急停止的路径长度
@@ -61,20 +65,20 @@ struct SafetyManagerConfig {
 };
 
 struct PlanManagerConfig {
+  typedef std::shared_ptr<PlanManagerConfig> Ptr;
   double plan_sleep_time = 0.1;
   int path_search_type = 0;  // 0 :ASTAR, 1:LAZY_THETA_ASTAR,2:KINO_ASTAR
 };
 
 struct AstarConfig {
+  typedef std::shared_ptr<AstarConfig> Ptr;
   double lambda_heu = 5;
   int allocate_num = 100000;
   double time_breaker = 1.0001;
+  int heu_type = 0;
 };
 
-struct PathSearchConfig {
-  struct KinoAstarConfig {
-  } kino_astar;
-};
+
 }  // namespace minco_local_planner::config_manager
 
 #endif /* __CONFIG_DATA_H__ */
