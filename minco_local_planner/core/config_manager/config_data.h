@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 17:01:16
+ * @Last Modified time: 2023-09-03 04:17:43
  */
 #include <stdint.h>
 
@@ -100,6 +100,16 @@ struct CarLikeKinoAstarConfig {
   double velocity_resolution = 0.5;
   int allocate_num = 100000;
   int check_num = 5;
+};
+
+struct KinoAstarConfig {
+  typedef std::shared_ptr<KinoAstarConfig> Ptr;
+  double max_vel = 0.8;
+  double max_acc = 1.0;
+  double max_tau = 0.5;
+  int allocate_num = 100000;
+  int check_num = 5;
+  double lambda_heu = 5.0;
 };
 
 }  // namespace minco_local_planner::config_manager

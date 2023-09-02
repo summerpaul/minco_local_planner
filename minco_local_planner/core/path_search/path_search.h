@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 22:30:35
+ * @Last Modified time: 2023-09-03 04:19:25
  */
 #include <stdint.h>
 
@@ -44,8 +44,11 @@ class PathSearch : public BaseModule {
   GridMap::Ptr map_ptr_;
   std::vector<PathNodePtr> path_node_pool_;
   int use_node_num_, iter_num_;
- 
+
   std::vector<PathNodePtr> path_nodes_;
+  NodeHashTable<PathNodePtr> expanded_nodes_;
+  std::priority_queue<PathNodePtr, std::vector<PathNodePtr>, NodeComparator>
+      open_set_;
 };
 
 }  // namespace minco_local_planner::path_search

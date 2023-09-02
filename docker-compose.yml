@@ -1,0 +1,24 @@
+# @Author: Xia Yunkai
+# @Date:   2023-09-03 04:04:42
+# @Last Modified by:   Xia Yunkai
+# @Last Modified time: 2023-09-03 04:06:21
+version: "3"
+services:
+  ros-vnc-sunny-vnc:
+    image: ros-vnc-sunny:noetic
+    container_name: motion-planning-paul
+    hostname: ubuntu
+    
+    privileged: true
+    environment:
+      - RESOLUTION=1920x1080
+    volumes:
+      # mount your workspace here:
+        - $PWD/../../../:/home/ubuntu/Project
+    ports:
+      # HTML5 VNC:
+      - 6080:80
+       # standard VNC client:
+      - 5900:5900
+      # ROS master:
+      - 11311:11311

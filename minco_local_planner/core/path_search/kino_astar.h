@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:30
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 22:20:09
+ * @Last Modified time: 2023-09-03 04:20:46
  */
 #include <stdint.h>
 
@@ -25,6 +25,8 @@ class KinoAstar : public PathSearch {
   virtual void Stop() override;
   virtual void GetPath2D(Path2d& path) override;
 
+ private:
+  KinoAstarConfig::Ptr cfg_;
 };
 }  // namespace minco_local_planner::path_search
 

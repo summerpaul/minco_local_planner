@@ -1,14 +1,15 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:36
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:48:04
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-03 04:21:05
  */
 #include "kino_astar.h"
 
 #include <iostream>
 using namespace std;
 #include "kino_astar.h"
+#include "module_manager/module_manager.h"
 namespace minco_local_planner::path_search {
 
 KinoAstar::KinoAstar() : PathSearch("KinoAstar") {}

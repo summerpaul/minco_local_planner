@@ -1,1 +1,1 @@
-add_library(path_search kino_astar.cpp astar.cpp car_like_kino_astar.cpp)
+add_library(path_search kino_astar.cpp astar.cpp car_like_kino_astar.cpp kino_astar.cpp)
