@@ -21,6 +21,7 @@ bool ConfigManager::Init() {
   safety_manager_cfg_.reset(new SafetyManagerConfig);
   plan_manager_cfg_.reset(new PlanManagerConfig);
   astar_cfg_.reset(new AstarConfig);
+  car_like_kino_astar_cfg_.reset(new CarLikeKinoAstarConfig);
 
   return ParseConfig();
 }

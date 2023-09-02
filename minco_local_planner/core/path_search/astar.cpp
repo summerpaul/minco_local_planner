@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:47
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:53:28
+ * @Last Modified time: 2023-09-02 14:05:57
  */
 #include <iostream>
 
@@ -159,11 +159,11 @@ void Astar::Reset() {
 
 double Astar::GetHeu(const Vec2d& x1, const Vec2d& x2,
                      const double& tie_breaker) {
-  if (cfg_->heu_type == 1) {
+  if (cfg_->heu_type == 0) {
     return GetEuclHeu(x1, x2, tie_breaker);
   }
 
-  else if (cfg_->heu_type == 2) {
+  else if (cfg_->heu_type == 1) {
     return GetManhHeu(x1, x2, tie_breaker);
   } else {
     return GetDiagHeu(x1, x2, tie_breaker);

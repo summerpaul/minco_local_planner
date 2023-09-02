@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:55:29
+ * @Last Modified time: 2023-09-02 17:04:55
  */
 #include <stdint.h>
 
@@ -55,6 +55,10 @@ class ConfigManager : public BaseModule {
 
   const AstarConfig::Ptr GetAstarConfig() const { return astar_cfg_; }
 
+  const CarLikeKinoAstarConfig::Ptr GetCarLikeKinoAstarConfig() const {
+    return car_like_kino_astar_cfg_;
+  }
+
  private:
   bool ParseLogConfig(const Json::Value& log_cfg_json);
   bool ParseRuntimeMangerConfig(const Json::Value& runtime_manager_cfg_json);
@@ -73,6 +77,7 @@ class ConfigManager : public BaseModule {
   SafetyManagerConfig::Ptr safety_manager_cfg_;
   PlanManagerConfig::Ptr plan_manager_cfg_;
   AstarConfig::Ptr astar_cfg_;
+  CarLikeKinoAstarConfig::Ptr car_like_kino_astar_cfg_;
 };
 }  // namespace minco_local_planner::config_manager
 
