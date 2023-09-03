@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:30
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:10:18
+ * @Last Modified time: 2023-09-03 10:03:31
  */
 #include <iostream>
 
@@ -15,7 +15,6 @@ int main(int argc, char **argv) {
   if (argc > 1) {
     config_path = argv[1];
   }
-  std::cout << "---------" << std::endl;
   ros::init(argc, argv, "Demo");
   Demo demo(config_path);
   if (!demo.Init()) {

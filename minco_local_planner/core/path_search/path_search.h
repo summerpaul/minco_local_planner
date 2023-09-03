@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:47:10
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 22:30:35
  */
 #include <stdint.h>
 
@@ -44,9 +44,7 @@ class PathSearch : public BaseModule {
   GridMap::Ptr map_ptr_;
   std::vector<PathNodePtr> path_node_pool_;
   int use_node_num_, iter_num_;
-  NodeHashTable<PathNodePtr> expanded_nodes_;
-  std::priority_queue<PathNodePtr, std::vector<PathNodePtr>, NodeComparator>
-      open_set_;
+ 
   std::vector<PathNodePtr> path_nodes_;
 };
 

@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 22:47:51
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 22:13:36
+ * @Last Modified time: 2023-09-03 09:53:21
  */
 #include <stdint.h>
 
@@ -145,9 +145,9 @@ inline Pose2d SubPose2d(const Pose2d &origin, const Pose2d &pose) {
   return ret;
 }
 
-inline Eigen::Quaterniond GetQuaterion(const Pose2d &p) {
-  double sy = std::sin(p[2] * 0.5);
-  double cy = std::cos(p[2] * 0.5);
+inline Quatd GetQuaterion(const double &yaw) {
+  double sy = std::sin(yaw * 0.5);
+  double cy = std::cos(yaw * 0.5);
   double sp = 0.;
   double cp = 1.;
   double sr = 0.;
@@ -156,8 +156,10 @@ inline Eigen::Quaterniond GetQuaterion(const Pose2d &p) {
   double x = sr * cp * cy - cr * sp * sy;
   double y = cr * sp * cy + sr * cp * sy;
   double z = cr * cp * sy - sr * sp * cy;
-  return Eigen::Quaterniond(w, x, y, z);
+  return Quatd(w, x, y, z);
 }
+
+inline Quatd GetQuaterion(const Pose2d &p) { return GetQuaterion(p[2]); }
 
 }  // namespace minco_local_planner::basis
 #endif /* __RIGID2D_H__ */

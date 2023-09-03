@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:30
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-01 18:47:26
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-02 22:20:09
  */
 #include <stdint.h>
 
@@ -25,8 +25,6 @@ class KinoAstar : public PathSearch {
   virtual void Stop() override;
   virtual void GetPath2D(Path2d& path) override;
 
- private:
-  Points2d car_vertex_;
 };
 }  // namespace minco_local_planner::path_search
 

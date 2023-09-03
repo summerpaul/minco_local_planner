@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:53:18
+ * @Last Modified time: 2023-09-02 22:30:44
  */
 #include <stdint.h>
 
@@ -40,6 +40,9 @@ class Astar : public PathSearch {
   void RetrievePath(PathNodePtr end_node);
 
  private:
+  NodeHashTable<PathNodePtr> expanded_nodes_;
+  std::priority_queue<PathNodePtr, std::vector<PathNodePtr>, NodeComparator>
+      open_set_;
   vec_Vec2i motions_;
   Vec2d end_pt_;
   AstarConfig::Ptr cfg_;

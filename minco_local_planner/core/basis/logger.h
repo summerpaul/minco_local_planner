@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 13:12:53
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-27 21:34:32
+ * @Last Modified time: 2023-09-03 10:09:17
  */
 #include <stdint.h>
 
@@ -103,6 +103,7 @@ class Logger {
       auto console_sink =
           std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
       sinks.push_back(console_sink);
+      
       std::cout << "log use console only " << std::endl;
     } else if (log_type == FILE) {
       auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(

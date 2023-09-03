@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:19:40
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 21:45:04
+ * @Last Modified time: 2023-09-03 09:57:16
  */
 #include <stdint.h>
 
@@ -61,7 +61,7 @@ typedef Eigen::Transform<double, 3, Eigen::Affine> Aff3d;
 
 typedef std::vector<double> Vec_d;
 
-typedef Eigen::Quaterniond Quaterniond;
+typedef Eigen::Quaternion<double> Quatd;
 
 typedef vec_Vec2d Points2d;
 typedef vec_Vec2d Path2d;
@@ -71,3 +71,33 @@ typedef Vec3d Pose2d;
 
 }  // namespace minco_local_planner::basis
 #endif /* __DATA_TYPE_H__ */
+
+
+///Set red font in printf funtion
+#ifndef ANSI_COLOR_RED
+#define ANSI_COLOR_RED "\x1b[1;31m"
+#endif
+///Set green font in printf funtion
+#ifndef ANSI_COLOR_GREEN
+#define ANSI_COLOR_GREEN "\x1b[1;32m"
+#endif
+///Set yellow font in printf funtion
+#ifndef ANSI_COLOR_YELLOW
+#define ANSI_COLOR_YELLOW "\x1b[1;33m"
+#endif
+///Set blue font in printf funtion
+#ifndef ANSI_COLOR_BLUE
+#define ANSI_COLOR_BLUE "\x1b[1;34m"
+#endif
+///Set magenta font in printf funtion
+#ifndef ANSI_COLOR_MAGENTA
+#define ANSI_COLOR_MAGENTA "\x1b[1;35m"
+#endif
+///Set cyan font in printf funtion
+#ifndef ANSI_COLOR_CYAN
+#define ANSI_COLOR_CYAN "\x1b[1;36m"
+#endif
+///Reset font color in printf funtion
+#ifndef ANSI_COLOR_RESET
+#define ANSI_COLOR_RESET "\x1b[0m"
+#endif
