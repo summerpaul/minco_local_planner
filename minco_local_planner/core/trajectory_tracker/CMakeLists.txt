@@ -1,0 +1,1 @@
+add_library(trajectory_tracker trajectory_tracker.cpp)

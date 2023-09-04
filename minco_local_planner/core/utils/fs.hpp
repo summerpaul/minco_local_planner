@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-04 15:24:02
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-04 22:13:43
+ * @Last Modified time: 2023-09-05 00:07:10
  */
 #include <stdint.h>
 
@@ -13,7 +13,6 @@
 #include <string>
 namespace minco_local_planner::utils::fs {
 
-using namespace minco_local_planner::basis;
 inline bool IsFileExist(const std::string &filename) {
   return std::filesystem::exists(filename);
 }

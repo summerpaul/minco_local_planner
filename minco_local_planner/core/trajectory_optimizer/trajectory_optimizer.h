@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-29 20:48:46
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-29 21:02:37
+ * @Last Modified time: 2023-09-05 00:13:29
  */
 #include <stdint.h>
 
@@ -11,6 +11,7 @@
 
 #include "basis/base_module.h"
 #include "basis/trajectory.h"
+#include "basis/logger.h"
 namespace minco_local_planner::trajectory_optimizer {
 using namespace basis;
 
