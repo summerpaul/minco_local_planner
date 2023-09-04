@@ -1,33 +1,21 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-09-04 15:24:02
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-04 15:47:47
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-04 22:13:43
  */
 #include <stdint.h>
 
 #ifndef __FS_HPP__
 #define __FS_HPP__
 
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-#include <cstring>
-#include <exception>
-#include <fstream>
-#include <functional>
+#include <filesystem>
 #include <string>
-
 namespace minco_local_planner::utils::fs {
-using std::exception;
-using std::ifstream;
-using std::ofstream;
+
 using namespace minco_local_planner::basis;
 inline bool IsFileExist(const std::string &filename) {
-  ifstream ifs(filename);
-  return ifs.is_open();
+  return std::filesystem::exists(filename);
 }
 
 inline std::string Dirname(const std::string &full_path) {
