@@ -1,59 +1,10 @@
 {
-    "log_cfg": {
-        "log_type": 0,
-        "log_level": 1,
-        "log_path": "/home/sunny/Project/my_projet/minco_local_planner_ws/src/minco_local_planner/log"
-    },
-    "runtime_manager_cfg": {
-        "check_sleep_time": 0.1,
-        "message_wait_time": 0.5
-    },
-    "map_manager_cfg": {
-        "pcd_map_path": "/home/ubuntu/Project/minco_local_planner_ws/src/minco_local_planner/minco_local_planner/pcdmap/demo.pcd",
-        "base_to_laser_yaw": 0,
-        "base_to_laser_x": 0,
-        "base_to_laser_y": 0,
-        "down_sampling_res": 0.05,
-        "grid_map_inf_size": 0.15,
-        "grid_map_res": 0.1,
-        "laser_max_range": 8,
-        "laser_min_range": 0.2,
-        "grid_map_height": 4,
-        "grid_map_width": 8,
-        "map_generate_time": 0.10000000000000001,
-        "raycast_dis": 0.5,
-        "raycast_res": 0.10000000000000001,
-        "use_global_map": true
-    },
-    "safety_manafger_cfg": {
-        "emergency_stop_length": 0.4,
-        "epsilon": 0.10000000000000001,
-        "max_region_radius": 0.5,
-        "replan_dist": 0.10000000000000001,
-        "safe_check_path_length": 3.0,
-        "safe_check_sleep_time": 0.10000000000000001,
-        "safe_distance": 0.20000000000000001,
-        "slow_down_length": 1.5,
-        "max_kappa": 200,
-        "vehicle_length": 0.5,
-        "vehicle_width": 0.3,
-        "back_to_center": 0.25,
-        "slow_down_box_x_margin": 1.0,
-        "slow_down_box_y_margin": 0.5,
-        "creep_box_x_margin": 0.5,
-        "creep_box_y_margin": 0.2,
-        "stop_box_x_margin": 0.3,
-        "stop_box_y_margin": 0.05,
-        "dangerous_to_safe_counts": 20
-    },
-    "plan_manager_cfg": {
-        "plan_sleep_time": 0.1,
-        "path_search_type": 0
-    },
-    "astar_cfg": {
-        "lambda_heu": 5.0,
-        "allocate_num": 100000,
-        "time_breaker": 1.0001,
-        "heu_type": 2
-    }
+    "__include__": [
+        "log.json",
+        "runtime_manager.json",
+        "map_manager.json",
+        "safety_manafger.json",
+        "plan_manager.json",
+        "astar.json"
+    ]
 }

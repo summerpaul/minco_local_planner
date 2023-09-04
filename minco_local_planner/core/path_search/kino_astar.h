@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 14:18:30
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 04:20:46
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-04 16:04:29
  */
 #include <stdint.h>
 
@@ -26,7 +26,24 @@ class KinoAstar : public PathSearch {
   virtual void GetPath2D(Path2d& path) override;
 
  private:
+  double EstimateHeuristic(const VehiclePose& currt_pt,
+                           const VehiclePose& target_pt, double& optimal_time);
+  Vec_d Quartic(const double& a, const double& b, const double& c,
+                const double& d, const double& e);
+  Vec_d Cubic(const double& a, const double& b, const double& c,
+              const double& d);
+
+  bool ComputeShotTraj(const VehiclePose& state1, const VehiclePose& state2,
+                       const double& time_to_goal);
+  void StateTransit(VehiclePose& state0, VehiclePose& state1, const Vec2d& um,
+                    const double& tau);
+
+ private:
   KinoAstarConfig::Ptr cfg_;
+  Eigen::MatrixXd coef_shot_, coef_shot_vel_, coef_shot_acc_;
+  double t_shot_{0};
+  bool is_shot_succ_{false};
+  Vec2d end_vel_;
 };
 }  // namespace minco_local_planner::path_search
 

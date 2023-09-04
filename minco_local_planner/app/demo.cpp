@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:34:21
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-04 17:17:39
  */
 #include "demo.h"
 
@@ -104,37 +104,39 @@ void Demo::LoadRoadmapCallback(const std_msgs::Empty::ConstPtr &msg) {
   std::string roadmap_path;
 
   pnh_.param<std::string>("roadmap_path", roadmap_path, "");
-  std::ifstream ifs(roadmap_path.data());  // open file example.json
-  Json::Value json_roadmap;
-  Json::Reader reader;
-  std::cout << "roadmap_path is " << roadmap_path << std::endl;
-  if (!reader.parse(ifs, json_roadmap)) {
-    std::cout << "failed to load config file " << std::endl;
+
+  Json json_roadmap;
+  try {
+    json_roadmap = Load(roadmap_path);
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
     return;
   }
 
   BezierSegments bezier_segs;
   for (auto &json_lane : json_roadmap) {
-    Vec2d p0, p1, p2, p3;
-    p0.x() = json_lane["start"]["x"].asDouble();
-    p0.y() = json_lane["start"]["y"].asDouble();
-    p1.x() = json_lane["p1"]["x"].asDouble();
-    p1.y() = json_lane["p1"]["y"].asDouble();
-    p2.x() = json_lane["p2"]["x"].asDouble();
-    p2.y() = json_lane["p2"]["y"].asDouble();
-    p3.x() = json_lane["end"]["x"].asDouble();
-    p3.y() = json_lane["end"]["y"].asDouble();
-    BezierSegment bezier_seg(p0, p1, p2, p3);
-    bezier_seg.SetId(json_lane["id"].asInt());
-    bezier_seg.SetSpeed(json_lane["speed"].asDouble());
-    bezier_seg.SetWidth(json_lane["width"].asDouble());
-    bezier_seg.SetStartId(json_lane["start"]["id"].asInt());
-    bezier_seg.SetEndId(json_lane["end"]["id"].asInt());
-    bezier_seg.SetLocalPlanFlag(json_lane["local_plan"].asBool());
-    bezier_segs.emplace_back(bezier_seg);
+    std::cout << "json_lane is " << json_lane << std::endl;
+    // Vec2d p0, p1, p2, p3;
+
+    // p0.x() = json_lane["start"]["x"].asDouble();
+    // p0.y() = json_lane["start"]["y"].asDouble();
+    // p1.x() = json_lane["p1"]["x"].asDouble();
+    // p1.y() = json_lane["p1"]["y"].asDouble();
+    // p2.x() = json_lane["p2"]["x"].asDouble();
+    // p2.y() = json_lane["p2"]["y"].asDouble();
+    // p3.x() = json_lane["end"]["x"].asDouble();
+    // p3.y() = json_lane["end"]["y"].asDouble();
+    // BezierSegment bezier_seg(p0, p1, p2, p3);
+    // bezier_seg.SetId(json_lane["id"].asInt());
+    // bezier_seg.SetSpeed(json_lane["speed"].asDouble());
+    // bezier_seg.SetWidth(json_lane["width"].asDouble());
+    // bezier_seg.SetStartId(json_lane["start"]["id"].asInt());
+    // bezier_seg.SetEndId(json_lane["end"]["id"].asInt());
+    // bezier_seg.SetLocalPlanFlag(json_lane["local_plan"].asBool());
+    // bezier_segs.emplace_back(bezier_seg);
   }
-  bezier_segments_ = bezier_segs;
-  b_get_bezier_segments_ = true;
+  // bezier_segments_ = bezier_segs;
+  // b_get_bezier_segments_ = true;
 }
 
 void Demo::CancelNaviCallback(const std_msgs::Empty::ConstPtr &msg) {

@@ -1,0 +1,6 @@
+{
+    "plan_manager_cfg": {
+        "plan_sleep_time": 0.1,
+        "path_search_type": 0
+    }
+}

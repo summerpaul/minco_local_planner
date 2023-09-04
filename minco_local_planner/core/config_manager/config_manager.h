@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:23:28
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 04:18:49
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-04 17:07:24
  */
 #include <stdint.h>
 
@@ -10,17 +10,11 @@
 #define __CONFIG_MANAGER_H__
 #include "basis/base_module.h"
 #include "config_data.h"
-
-#if defined(__GNUC__) && (defined(__x86_64__) || defined(__i386__))
-#include <jsoncpp/json/json.h>
-#elif defined(__GNUC__) && defined(__ARM_NEON)
-#include <json/json.h>
-#endif
-
+#include "utils/json_deep_loader.hpp"
 namespace minco_local_planner::config_manager {
 
 using namespace basis;
-
+using namespace utils;
 class ConfigManager : public BaseModule {
  public:
   typedef std::shared_ptr<ConfigManager> Ptr;
@@ -64,14 +58,14 @@ class ConfigManager : public BaseModule {
   }
 
  private:
-  bool ParseLogConfig(const Json::Value& log_cfg_json);
-  bool ParseRuntimeMangerConfig(const Json::Value& runtime_manager_cfg_json);
-  bool ParseMapManagerConfig(const Json::Value& map_manager_cfg_json);
-  bool ParseSafetyManagerConfig(const Json::Value& safety_manager_cfg_json);
-  bool ParsePlanManagerConfig(const Json::Value& plan_manager_cfg_json);
+  bool ParseLogConfig(const Json& log_cfg_json);
+  bool ParseRuntimeMangerConfig(const Json& runtime_manager_cfg_json);
+  bool ParseMapManagerConfig(const Json& map_manager_cfg_json);
+  bool ParseSafetyManagerConfig(const Json& safety_manager_cfg_json);
+  bool ParsePlanManagerConfig(const Json& plan_manager_cfg_json);
 
-  // 算法相关
-  bool ParseAstarConfig(const Json::Value& astar_cfg_json);
+  // // 算法相关
+  bool ParseAstarConfig(const Json& astar_cfg_json);
 
  private:
   std::string config_file_path_;

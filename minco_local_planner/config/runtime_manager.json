@@ -1,0 +1,6 @@
+{
+    "runtime_manager_cfg": {
+        "check_sleep_time": 0.1,
+        "message_wait_time": 0.5
+    }
+}

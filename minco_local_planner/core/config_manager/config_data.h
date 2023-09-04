@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 04:17:43
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-04 09:04:08
  */
 #include <stdint.h>
 
@@ -110,6 +110,7 @@ struct KinoAstarConfig {
   int allocate_num = 100000;
   int check_num = 5;
   double lambda_heu = 5.0;
+  double max_search_time = 2.0;
 };
 
 }  // namespace minco_local_planner::config_manager

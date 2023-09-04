@@ -1,0 +1,8 @@
+{
+    "astar_cfg": {
+        "lambda_heu": 5.0,
+        "allocate_num": 100000,
+        "time_breaker": 1.0001,
+        "heu_type": 2
+    }
+}

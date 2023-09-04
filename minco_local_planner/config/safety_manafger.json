@@ -1,0 +1,23 @@
+{
+    "safety_manafger": {
+        "emergency_stop_length": 0.4,
+        "epsilon": 0.10000000000000001,
+        "max_region_radius": 0.5,
+        "replan_dist": 0.10000000000000001,
+        "safe_check_path_length": 3.0,
+        "safe_check_sleep_time": 0.10000000000000001,
+        "safe_distance": 0.20000000000000001,
+        "slow_down_length": 1.5,
+        "max_kappa": 200,
+        "vehicle_length": 0.5,
+        "vehicle_width": 0.3,
+        "back_to_center": 0.25,
+        "slow_down_box_x_margin": 1.0,
+        "slow_down_box_y_margin": 0.5,
+        "creep_box_x_margin": 0.5,
+        "creep_box_y_margin": 0.2,
+        "stop_box_x_margin": 0.3,
+        "stop_box_y_margin": 0.05,
+        "dangerous_to_safe_counts": 20
+    }
+}

@@ -1,11 +1,16 @@
 # @Author: Xia Yunkai
 # @Date:   2023-09-03 04:04:42
-# @Last Modified by:   Xia Yunkai
-# @Last Modified time: 2023-09-03 04:06:21
+# @Last Modified by:   Yunkai Xia
+# @Last Modified time: 2023-09-04 09:01:55
 version: "3"
 services:
   ros-vnc-sunny-vnc:
+    build:
+        context: docker
+        dockerfile: Dockerfile
+        network: host
     image: ros-vnc-sunny:noetic
+     
     container_name: motion-planning-paul
     hostname: ubuntu
     
