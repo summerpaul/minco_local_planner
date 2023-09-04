@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-09-04 15:56:40
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-04 17:35:33
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-04 20:35:12
  */
 #include "config_manager.h"
 
@@ -37,71 +37,32 @@ bool ConfigManager::ParseConfig() {
     return false;
   }
 
-  Json log_json;
-  if (!GetField(config_json, "log_cfg", log_json)) {
-    std::cout << "failed to load log_cfg " << std::endl;
-    return false;
-  }
-  if (!ParseLogConfig(config_json)) {
+  if (!ParseLogConfig(config_json["log_cfg"])) {
     std::cout << "failed to parse log_cfg " << std::endl;
     return false;
   }
-  Json runtime_manager_cfg_json;
 
-  if (!GetField(config_json, "runtime_manager_cfg", runtime_manager_cfg_json)) {
-    std::cout << "failed to load runtime_manager_cfg " << std::endl;
-    return false;
-  }
-
-  if (!ParseRuntimeMangerConfig(runtime_manager_cfg_json)) {
+  if (!ParseRuntimeMangerConfig(config_json["runtime_manager_cfg"])) {
     std::cout << "failed to parse runtime_manager_cfg_json " << std::endl;
     return false;
   }
 
-  Json map_manager_cfg_json;
-
-  if (!GetField(config_json, "map_manager_cfg", map_manager_cfg_json)) {
-    std::cout << "failed to load map_manager_cfg " << std::endl;
-    return false;
-  }
-
-  if (!ParseMapManagerConfig(map_manager_cfg_json)) {
+  if (!ParseMapManagerConfig(config_json["map_manager_cfg"])) {
     std::cout << "failed to parse map_manager_cfg_json " << std::endl;
     return false;
   }
 
-  Json safety_manager_cfg_json;
-
-  if (!GetField(config_json, "safety_manager_cfg", safety_manager_cfg_json)) {
-    std::cout << "failed to load safety_manager_cfg " << std::endl;
-    return false;
-  }
-
-  if (!ParseSafetyManagerConfig(safety_manager_cfg_json)) {
+  if (!ParseSafetyManagerConfig(config_json["safety_manager_cfg"])) {
     std::cout << "failed to parse safety_manager_cfg_json " << std::endl;
     return false;
   }
 
-  Json plan_manager_cfg_json;
-
-  if (!GetField(config_json, "plan_manager_cfg", plan_manager_cfg_json)) {
-    std::cout << "failed to load plan_manager_cfg " << std::endl;
-    return false;
-  }
-
-  if (!ParsePlanManagerConfig(plan_manager_cfg_json)) {
+  if (!ParsePlanManagerConfig(config_json["plan_manager_cfg"])) {
     std::cout << "failed to parse plan_manager_cfg_json " << std::endl;
     return false;
   }
 
-  Json astar_cfg_json;
-
-  if (!GetField(config_json, "astar_cfg", astar_cfg_json)) {
-    std::cout << "failed to load astar_cfg " << std::endl;
-    return false;
-  }
-
-  if (!ParseAstarConfig(astar_cfg_json)) {
+  if (!ParseAstarConfig(config_json["astar_cfg"])) {
     std::cout << "failed to parse astar_cfg_json " << std::endl;
     return false;
   }

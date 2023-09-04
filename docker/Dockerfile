@@ -16,33 +16,3 @@ RUN apt-get update -q --fix-missing && \
 
 RUN apt-get install -y libfmt-dev  terminator
 
-COPY ${PWD}/third_party /home/ubuntu/third_party
-WORKDIR /home/ubuntu/third_party
-RUN cd nlopt && \
-    mkdir build && cd build && \
-    cmake .. && \
-    make -j8 && \
-    make install
-
-
-
-WORKDIR /home/ubuntu/third_party 
-RUN cd libzmq && \
-    mkdir build && cd build && \
-    cmake ..  && \
-    make -j8 && \
-    make install 
-
-WORKDIR /home/ubuntu/third_party 
-RUN cd cppzmq && \
-    mkdir build && cd build && \
-    cmake  -DCPPZMQ_BUILD_TESTS=OFF .. && \
-    make -j8 && \
-    make install 
-
-WORKDIR /home/ubuntu/third_party 
-RUN cd spdlog && \
-    mkdir build && cd build && \
-    cmake .. && \
-    make -j8 && \
-    make install 

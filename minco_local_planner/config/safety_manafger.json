@@ -1,5 +1,5 @@
 {
-    "safety_manafger": {
+    "safety_manager_cfg": {
         "emergency_stop_length": 0.4,
         "epsilon": 0.10000000000000001,
         "max_region_radius": 0.5,
