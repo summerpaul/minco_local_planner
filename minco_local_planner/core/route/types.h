@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-09-04 21:24:02
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-04 22:31:18
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 11:23:46
  */
 #include <stdint.h>
 
@@ -19,6 +19,7 @@
 #include "basis/data_type.h"
 namespace minco_local_planner::route {
 using namespace basis;
+
 struct Metadata {
   Metadata() {}
 
@@ -48,23 +49,28 @@ typedef std::vector<NodePtr> NodePtrVector;
 typedef std::pair<float, NodePtr> NodeElement;
 typedef std::pair<unsigned int, unsigned int> NodeExtents;
 
+// 优先队列的比较器
 struct NodeComparator {
   bool operator()(const NodeElement& a, const NodeElement& b) const {
     return a.first > b.first;
   }
 };
 
+// 优先队列
 typedef std::priority_queue<NodeElement, std::vector<NodeElement>,
                             NodeComparator>
     NodeQueue;
 
+// 图搜索中边的代价
 struct EdgeCost {
   float cost{0.0};
   bool overridable{true};  // If overridable, may use plugin edge cost scorers
 };
 
+// 路径节点是否启用执行操作
 enum class OperationTrigger { NODE = 0, ON_ENTER = 1, ON_EXIT = 2 };
 
+// 执行操作的具体内容
 struct Operation {
   std::string type;
   OperationTrigger trigger;
@@ -80,15 +86,16 @@ struct OperationsResult {
   std::vector<unsigned int> blocked_ids;
 };
 
+// 双向边存储的内容，更改，使用3阶贝塞尔
 struct DirectionalEdge {
   unsigned int edgeid;     // Edge identifier
   NodePtr start{nullptr};  // Ptr to starting node of edge
   NodePtr end{nullptr};    // Ptr to ending node of edge
-//   Vec2d p1;
-//   Vec2d p2;
-  EdgeCost edge_cost;     // Cost information associated with edge
-  Metadata metadata;      // Any metadata stored in the graph file of interest
-  Operations operations;  // Operations to perform related to the edge
+                           //   Vec2d p1;
+                           //   Vec2d p2;
+  EdgeCost edge_cost;      // Cost information associated with edge
+  Metadata metadata;       // Any metadata stored in the graph file of interest
+  Operations operations;   // Operations to perform related to the edge
 };
 
 typedef DirectionalEdge* EdgePtr;
@@ -113,13 +120,13 @@ struct Coordinates {
 };
 
 struct Node {
-  unsigned int nodeid;    // Node identifier
-  Coordinates coords;     // Coordinates of node
+  unsigned int nodeid;  // Node identifier
+  Coordinates coords;   // Coordinates of node
   EdgeVector neighbors;   // Directed neighbors and edges of the node
   Metadata metadata;      // Any metadata stored in the graph file of interest
   Operations operations;  // Operations to perform related to the node
   SearchState search_state;  // State maintained by route search algorithm
-
+  // 节点增加边
   void AddEdge(EdgeCost& cost, NodePtr node, unsigned int edgeid,
                Metadata meta_data = {}, Operations operations_data = {}) {
     neighbors.push_back({edgeid, this, node, cost, meta_data, operations_data});

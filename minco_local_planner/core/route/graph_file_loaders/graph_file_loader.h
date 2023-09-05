@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-09-04 21:44:23
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-04 22:17:29
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 13:17:44
  */
 #include <stdint.h>
 
@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-#include "types.h"
+#include "route/types.h"
 namespace minco_local_planner::route {
 
 class GraphFileLoader {

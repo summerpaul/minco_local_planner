@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-05 08:48:04
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 09:21:44
+ * @Last Modified time: 2023-09-05 10:58:46
  */
 #include <stdint.h>
 
@@ -36,6 +36,7 @@ class ESDFMap : public GridMap {
         pt.y = pos(1);
         pt.z = -0.1;
         pt.intensity = (dist - min_dist) / (max_dist - min_dist);
+
         cloud.emplace_back(pt);
         if (dist < 0) {
           std::cout << "dist is " << dist << std::endl;
@@ -77,7 +78,7 @@ class ESDFMap : public GridMap {
                0, dim_[0] - 1, 0);
     }
     std::lock_guard<std::mutex> lock(distance_buffer_mutex_);
-    distance_buffer_ = std::move(distance_buffer);
+    distance_buffer_ = distance_buffer;
     is_generate_esdf_ = true;
   }
 

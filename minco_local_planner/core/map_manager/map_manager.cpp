@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 09:49:57
+ * @Last Modified time: 2023-09-05 11:03:29
  */
 #include "map_manager.h"
 
@@ -57,7 +57,7 @@ bool MapManager::Start() {
   if (cfg_->use_esdf_map) {
     Singleton<TimerManager>()->Schedule(
         int(cfg_->map_generate_time * 1000),
-        std::bind(&MapManager::GenerateInitLocalESDFMap, this));
+        std::bind(&MapManager::GenerateLocalESDFMapTimer, this));
   }
   return true;
 }
