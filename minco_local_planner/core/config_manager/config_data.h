@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-04 09:04:08
+ * @Last Modified time: 2023-09-05 09:31:48
  */
 #include <stdint.h>
 
@@ -38,9 +38,11 @@ struct MapManagerConfig {
   double base_to_laser_x = 0;  // 激光雷达与车体坐标系的相对坐标x
   double base_to_laser_y = 0;  // 激光雷达与车体坐标系的相对坐标y
   double base_to_laser_yaw = 0;  // 激光雷达与车体坐标系的相对坐标yaw
-  double grid_map_width = 4.0;   // 地图的宽 单位 m(车身轴向)
-  double grid_map_height = 7.0;  // 地图的高 单位m（车身横向）
+  double local_map_width = 4.0;   // 地图的宽 单位 m(车身轴向)
+  double local_map_height = 7.0;  // 地图的高 单位m（车身横向）
   bool use_global_map = false;   // 使用启用全局地图
+  double esdf_map_res = 0.1;
+  bool use_esdf_map = false;
 };
 // 安全管理配置
 struct SafetyManagerConfig {

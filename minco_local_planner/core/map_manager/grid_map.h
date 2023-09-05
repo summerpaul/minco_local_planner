@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-08-30 23:00:00
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 08:50:26
  */
 #include <stdint.h>
 
@@ -55,6 +55,7 @@ class GridMap {
     height_ = dim_.y();
     data_size_ = data.size();
     mutex_.unlock();
+    is_initialized_ = true;
   }
 
   const double GetRes() const { return res_; }
@@ -225,6 +226,7 @@ class GridMap {
   int width_{0};
   int height_{0};
   size_t data_size_{0};
+  bool is_initialized_{false};
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

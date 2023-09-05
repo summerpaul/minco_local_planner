@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:32
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-01 23:41:11
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 09:57:42
  */
 #include "visualizer.h"
 
@@ -53,6 +53,9 @@ Visualizer::Visualizer() {
   bezier_segments_pub_ =
       nh_.advertise<visualization_msgs::MarkerArray>("bezier_segments", 1);
   global_path_pub_ = nh_.advertise<nav_msgs::Path>("global_path", 1);
+
+  local_esdf_map_pub_ =
+      nh_.advertise<sensor_msgs::PointCloud2>("local_esdf_map", 1);
 }
 
 void Visualizer::LocalGridMapVis(const Pose2d &origin, const Vec2i &dim,
@@ -154,5 +157,13 @@ void Visualizer::GlobalPathVis(const Path2d &path,
     path_vis.poses.emplace_back(pose);
   }
   global_path_pub_.publish(path_vis);
+}
+
+void Visualizer::LocalESDFMapVis(const PointCloud3di &cloud,
+                                 const std::string frame_id) {
+  sensor_msgs::PointCloud2 esdf_cloud_msg;
+  pcl::toROSMsg(cloud, esdf_cloud_msg);
+  esdf_cloud_msg.header.frame_id = frame_id;
+  local_esdf_map_pub_.publish(esdf_cloud_msg);
 }
 }  // namespace visualizer

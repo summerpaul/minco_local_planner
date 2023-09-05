@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:52:28
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 09:49:57
  */
 #include "map_manager.h"
 
@@ -34,6 +34,10 @@ bool MapManager::Init() {
     b_have_global_map_ = true;
   }
 
+  if (cfg_->use_esdf_map) {
+    GenerateInitLocalESDFMap();
+  }
+
   return true;
 }
 bool MapManager::Start() {
@@ -49,26 +53,55 @@ bool MapManager::Start() {
         int(cfg_->map_generate_time * 1000),
         std::bind(&MapManager::GenerateGlobalGridMapTimer, this));
   }
+
+  if (cfg_->use_esdf_map) {
+    Singleton<TimerManager>()->Schedule(
+        int(cfg_->map_generate_time * 1000),
+        std::bind(&MapManager::GenerateInitLocalESDFMap, this));
+  }
   return true;
 }
 void MapManager::Stop() {}
 
+void MapManager::GetESDFPointCloud(PointCloud3di &cloud) {
+  esdf_map_ptr_->GetESDFPointCloud(cloud);
+}
+
 void MapManager::GenerateInitLocalGridMap() {
   local_map_ptr_.reset(new GridMap("local_grid_map"));
   const double res = cfg_->grid_map_res;
-  res_inv_ = 1 / cfg_->grid_map_res;
-  width_ = std::ceil(cfg_->grid_map_width * res_inv_);
-  height_ = std::ceil(cfg_->grid_map_height * res_inv_);
+  grid_map_res_inv_ = 1 / res;
+  grid_map_width_ = std::ceil(cfg_->local_map_width * grid_map_res_inv_);
+  grid_map_height_ = std::ceil(cfg_->local_map_height * grid_map_res_inv_);
   std::vector<int8_t> data;
-  const int data_size = width_ * height_;
+  const int data_size = grid_map_width_ * grid_map_height_;
   data.resize(data_size);
   data.assign(data_size, FREE);
-  map_offset_ = -0.5 * Pose2d(cfg_->grid_map_width, cfg_->grid_map_height, 0);
+  map_offset_ = -0.5 * Pose2d(cfg_->local_map_width, cfg_->local_map_height, 0);
   Pose2d origin;
-  const Vec2i dim(width_, height_);
+  const Vec2i dim(grid_map_width_, grid_map_height_);
   local_map_ptr_->CreateGridMap(origin, dim, data, res);
-  std::cout << "dim is " << dim << std::endl;
   b_have_local_map_ = true;
+}
+
+void MapManager::GenerateInitLocalESDFMap() {
+  esdf_map_ptr_.reset(new ESDFMap);
+  const double res = cfg_->esdf_map_res;
+  esdf_map_res_inv_ = 1 / res;
+
+  esdf_map_width_ = std::ceil(cfg_->local_map_width * esdf_map_res_inv_);
+
+  esdf_map_height_ = std::ceil(cfg_->local_map_height * esdf_map_res_inv_);
+
+  std::vector<int8_t> data;
+  const int data_size = esdf_map_width_ * esdf_map_height_;
+  data.resize(data_size);
+  data.assign(data_size, FREE);
+  Pose2d origin;
+  const Vec2i dim(esdf_map_width_, esdf_map_height_);
+  esdf_map_ptr_->CreateGridMap(origin, dim, data, res);
+  esdf_map_ptr_->GenerateESDF2d();
+  b_have_esdf_map_ = true;
 }
 
 bool MapManager::GenerateInitGlobalGridMap() {
@@ -101,7 +134,8 @@ void MapManager::raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud) {
     const double cur_angle_cos = std::cos(cur_angle);
     const double cur_angle_sin = std::sin(cur_angle);
     // 根据配置的激光雷达范围获取点云
-    if (cur_range < cfg_->laser_max_range && cur_range > cfg_->laser_min_range) {
+    if (cur_range < cfg_->laser_max_range &&
+        cur_range > cfg_->laser_min_range) {
       cloud.points.emplace_back(pcl::PointXYZ(cur_angle_cos * cur_range,
                                               cur_angle_sin * cur_range, 0));
       for (double raycast_range = cur_range + cfg_->raycast_res;
@@ -115,6 +149,7 @@ void MapManager::raycast(const LaserScan &laser_scan_in, PointCloud3d &cloud) {
   cloud.width = cloud.points.size();
   cloud.height = 1;
 }
+
 void MapManager::GenerateTransformedPointcloudTimer() {
   std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
   const LaserScan scan =
@@ -139,13 +174,33 @@ void MapManager::GenerateLocalGridMapTimer() {
   local_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
 
   for (auto &point : transformed_pointcloud_.points) {
-    const int x =
-        std::round(point.x * res_inv_ - 0.5) + std::ceil(0.5 * width_);
-    const int y =
-        std::round(point.y * res_inv_ - 0.5) + std::ceil(0.5 * height_);
+    const int x = std::round(point.x * grid_map_res_inv_ - 0.5) +
+                  std::ceil(0.5 * grid_map_width_);
+    const int y = std::round(point.y * grid_map_res_inv_ - 0.5) +
+                  std::ceil(0.5 * grid_map_height_);
     Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
     local_map_ptr_->SetInfOccupied(pt, cfg_->grid_map_inf_size);
   }
+}
+
+void MapManager::GenerateLocalESDFMapTimer() {
+  std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
+  const VehiclePose pose =
+      ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
+
+  // 重置栅格地图数据
+  esdf_map_ptr_->SetDataZero();
+  //
+  esdf_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
+
+  for (auto &point : transformed_pointcloud_.points) {
+    const int x = std::round(point.x * esdf_map_res_inv_ - 0.5) +
+                  std::ceil(0.5 * esdf_map_width_);
+    const int y = std::round(point.y * esdf_map_res_inv_ - 0.5) +
+                  std::ceil(0.5 * esdf_map_height_);
+    esdf_map_ptr_->SetOccupied(Vec2i(x, y));
+  }
+  esdf_map_ptr_->GenerateESDF2d();
 }
 
 void MapManager::GenerateGlobalGridMapTimer() {

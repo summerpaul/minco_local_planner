@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-09-04 15:56:40
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-04 20:35:12
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 09:32:05
  */
 #include "config_manager.h"
 
@@ -119,8 +119,8 @@ bool ConfigManager::ParseMapManagerConfig(const Json& map_manager_cfg_json) {
     return false;
   }
 
-  if (!GetField(map_manager_cfg_json, "grid_map_height",
-                map_manager_cfg_->grid_map_height)) {
+  if (!GetField(map_manager_cfg_json, "local_map_height",
+                map_manager_cfg_->local_map_height)) {
     return false;
   }
 
@@ -134,8 +134,8 @@ bool ConfigManager::ParseMapManagerConfig(const Json& map_manager_cfg_json) {
     return false;
   }
 
-  if (!GetField(map_manager_cfg_json, "grid_map_width",
-                map_manager_cfg_->grid_map_width)) {
+  if (!GetField(map_manager_cfg_json, "local_map_width",
+                map_manager_cfg_->local_map_width)) {
     return false;
   }
 
@@ -171,6 +171,16 @@ bool ConfigManager::ParseMapManagerConfig(const Json& map_manager_cfg_json) {
 
   if (!GetField(map_manager_cfg_json, "use_global_map",
                 map_manager_cfg_->use_global_map)) {
+    return false;
+  }
+
+  if (!GetField(map_manager_cfg_json, "esdf_map_res",
+                map_manager_cfg_->esdf_map_res)) {
+    return false;
+  }
+
+  if (!GetField(map_manager_cfg_json, "use_esdf_map",
+                map_manager_cfg_->use_esdf_map)) {
     return false;
   }
   return true;

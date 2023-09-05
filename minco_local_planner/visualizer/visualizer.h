@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-27 22:12:28
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-01 23:42:50
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-05 09:57:39
  */
 #include <stdint.h>
 
@@ -44,6 +44,9 @@ class Visualizer {
                          const std::string &frame_id = "odom");
   void GlobalPathVis(const Path2d &path, const std::string &frame_id = "odom");
 
+  void LocalESDFMapVis(const PointCloud3di &cloud,
+                       const std::string frame_id = "odom");
+
  private:
   ros::NodeHandle nh_;
   ros::Publisher local_map_pub_;   // 局部栅格地图
@@ -52,6 +55,7 @@ class Visualizer {
   ros::Publisher safety_bounding_boxes_pub_;
   ros::Publisher bezier_segments_pub_;
   ros::Publisher global_path_pub_;
+  ros::Publisher local_esdf_map_pub_;  // 局部esdf地图显示
 };
 }  // namespace visualizer
 

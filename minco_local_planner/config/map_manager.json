@@ -6,14 +6,16 @@
         "base_to_laser_y": 0,
         "down_sampling_res": 0.05,
         "grid_map_inf_size": 0.15,
-        "grid_map_res": 0.1,
+        "grid_map_res": 0.05,
         "laser_max_range": 8,
         "laser_min_range": 0.2,
-        "grid_map_height": 4,
-        "grid_map_width": 8,
+        "local_map_height": 4,
+        "local_map_width": 8,
         "map_generate_time": 0.10000000000000001,
         "raycast_dis": 0.5,
         "raycast_res": 0.10000000000000001,
-        "use_global_map": true
+        "use_global_map": true,
+        "esdf_map_res":0.1,
+        "use_esdf_map":true
     }
 }

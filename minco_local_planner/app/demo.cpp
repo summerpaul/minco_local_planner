@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-25 09:52:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-04 17:17:39
+ * @Last Modified time: 2023-09-05 09:56:55
  */
 #include "demo.h"
 
@@ -168,6 +168,13 @@ void Demo::VisTimer() {
     visualizer_.GlobalGridMapVis(
         global_gird_map->GetOrigin(), global_gird_map->GetDim(),
         global_gird_map->GetData(), global_gird_map->GetRes());
+  }
+
+  // 显示ESDFmap
+  if (ModuleManager::GetInstance()->GetMapManager()->HaveESDFMap()) {
+    PointCloud3di esdf_map;
+    ModuleManager::GetInstance()->GetMapManager()->GetESDFPointCloud(esdf_map);
+    visualizer_.LocalESDFMapVis(esdf_map);
   }
 
   const PointCloud3d transformed_pcd =
