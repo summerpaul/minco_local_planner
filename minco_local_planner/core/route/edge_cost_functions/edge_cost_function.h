@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-05 13:12:41
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 13:56:51
+ * @Last Modified time: 2023-09-05 17:15:34
  */
 
 #ifndef __EDGE_COST_FUNCTION_H__
@@ -19,9 +19,9 @@ class EdgeCostFunction {
 
   EdgeCostFunction() = default;
 
-  virtual bool Init() = 0;
-
   virtual ~EdgeCostFunction() = default;
+
+  virtual bool Init() = 0;
 
   virtual bool Score(const EdgePtr edge, float& cost) = 0;
 

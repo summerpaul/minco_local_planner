@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-05 13:21:00
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 13:57:58
+ * @Last Modified time: 2023-09-05 16:55:41
  */
 #include <stdint.h>
 
@@ -25,7 +25,7 @@ class EdgeScorer {
   int NumPlugins() const;
 
  private:
-  std::vector<EdgeCostFunction::Ptr> plugins_;
+  std::vector<EdgeCostFunction::Ptr> edge_cost_functions_;
 };
 
 }  // namespace minco_local_planner::route

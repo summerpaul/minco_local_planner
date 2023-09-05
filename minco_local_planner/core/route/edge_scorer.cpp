@@ -18,10 +18,10 @@ bool EdgeScorer::Score(const EdgePtr edge, float& total_score) {
   total_score = 0.0;
   float curr_score = 0.0;
 
-  for (auto& plugin : plugins_) {
+  for (auto& plugin : edge_cost_functions_) {
     plugin->Prepare();
   }
-  for (auto& plugin : plugins_) {
+  for (auto& plugin : edge_cost_functions_) {
     curr_score = 0.0;
     if (plugin->Score(edge, curr_score)) {
       total_score += curr_score;
@@ -32,5 +32,5 @@ bool EdgeScorer::Score(const EdgePtr edge, float& total_score) {
 
   return true;
 }
-int EdgeScorer::NumPlugins() const { return plugins_.size(); }
+int EdgeScorer::NumPlugins() const { return edge_cost_functions_.size(); }
 }  // namespace minco_local_planner::route

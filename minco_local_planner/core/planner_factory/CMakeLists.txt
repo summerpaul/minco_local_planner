@@ -1,1 +1,2 @@
 add_library(planner_factory planner_factory.cpp)
+target_link_libraries(planner_factory route)

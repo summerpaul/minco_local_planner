@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-05 13:44:10
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 13:56:24
+ * @Last Modified time: 2023-09-05 17:13:18
  */
 #include "distance_scorer.h"
 
@@ -10,7 +10,11 @@
 
 namespace minco_local_planner::route {
 
-bool DistanceScorer::Init() { name_ = "DistanceScorer"; }
+DistanceScorer::~DistanceScorer() {}
+bool DistanceScorer::Init() {
+  name_ = "DistanceScorer";
+  return true;
+}
 
 bool DistanceScorer::Score(const EdgePtr edge, float& cost) {
   float speed_val = 1.0f;

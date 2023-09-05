@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-09-05 13:34:54
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 13:52:19
+ * @Last Modified time: 2023-09-05 17:13:04
  */
 #include <stdint.h>
 
@@ -16,14 +16,13 @@ namespace minco_local_planner::route {
 class DistanceScorer : public EdgeCostFunction {
  public:
   DistanceScorer() = default;
-  virtual ~DistanceScorer() = default;
+  virtual ~DistanceScorer();
 
-  virtual bool Init() = 0;
+  virtual bool Init() override;
 
   virtual bool Score(const EdgePtr edge, float& cost) override;
 
   virtual std::string GetName() override;
-
 
  protected:
   std::string name_;
