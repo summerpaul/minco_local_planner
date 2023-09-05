@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-09-04 15:56:40
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 09:32:05
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-05 23:33:36
  */
 #include "config_manager.h"
 
@@ -288,6 +288,16 @@ bool ConfigManager::ParsePlanManagerConfig(const Json& plan_manager_cfg_json) {
 
   if (!GetField(plan_manager_cfg_json, "plan_sleep_time",
                 plan_manager_cfg_->plan_sleep_time)) {
+    return false;
+  }
+
+  if (!GetField(plan_manager_cfg_json, "path_search_class_name",
+                plan_manager_cfg_->path_search_class_name)) {
+    return false;
+  }
+
+  if (!GetField(plan_manager_cfg_json, "path_search_lib_path",
+                plan_manager_cfg_->path_search_lib_path)) {
     return false;
   }
   return true;

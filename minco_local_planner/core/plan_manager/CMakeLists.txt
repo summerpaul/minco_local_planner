@@ -1,2 +1,2 @@
 add_library(plan_manager plan_manager.cpp replan_fsm.cpp)
-target_link_libraries(plan_manager planner_factory path_search)
+target_link_libraries(plan_manager plugin_loader)

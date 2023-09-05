@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:47:53
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 09:53:44
+ * @Last Modified time: 2023-09-05 23:58:32
  */
 #include <stdint.h>
 
@@ -13,6 +13,7 @@
 #include "basis/vehicle_pose.h"
 #include "config_manager/config_data.h"
 #include "path_search/path_search.h"
+#include "plugin_loader/plugin_loader.hpp"
 namespace minco_local_planner::plan_manager {
 
 using namespace basis;
@@ -60,9 +61,10 @@ class PlanManager : public BaseModule {
  private:
   PlanStatus status_;
   VehiclePose target_pose_;
-  PathSearch::Ptr path_search_ptr_;  // 全局路径规划器
   PlanManagerConfig::Ptr cfg_;
   Path2d global_path_;
+  std::unique_ptr<plugin_loader::PluginLoader> path_search_plugin_loader_;
+  PathSearch::Ptr path_search_ptr_;  // 全局路径规划器
 };
 }  // namespace minco_local_planner::plan_manager
 

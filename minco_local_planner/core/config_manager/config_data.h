@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 15:11:34
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 09:31:48
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-05 23:32:35
  */
 #include <stdint.h>
 
@@ -70,6 +70,9 @@ struct PlanManagerConfig {
   typedef std::shared_ptr<PlanManagerConfig> Ptr;
   double plan_sleep_time = 0.1;
   int path_search_type = 0;  // 0 :ASTAR, 1:LAZY_THETA_ASTAR,2:KINO_ASTAR
+  std::string path_search_lib_path;
+  std::string path_search_class_name;
+
 };
 
 struct AstarConfig {

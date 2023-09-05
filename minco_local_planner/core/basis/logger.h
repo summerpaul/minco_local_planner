@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 13:12:53
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 10:09:17
+ * @Last Modified time: 2023-09-05 22:11:23
  */
 #include <stdint.h>
 
@@ -50,7 +50,7 @@ static inline int NowTimeToInt() {
   return now_int;
 }
 
-enum LoggerType { CONSOLE = 0, FILE = 1, SPLITTER = 2 };
+enum class LoggerType { CONSOLE_ONLY = 0, FILE_ONLY = 1, SPLITTER = 2 };
 
 class Logger {
  public:
@@ -99,13 +99,13 @@ class Logger {
                     const std::string &path) {
     std::vector<spdlog::sink_ptr> sinks;
 
-    if (log_type == CONSOLE) {
+    if (log_type == LoggerType::CONSOLE_ONLY) {
       auto console_sink =
           std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
       sinks.push_back(console_sink);
-      
+
       std::cout << "log use console only " << std::endl;
-    } else if (log_type == FILE) {
+    } else if (log_type == LoggerType::FILE_ONLY) {
       auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
           path.c_str(), true);
       std::cout << "log use file only " << std::endl;

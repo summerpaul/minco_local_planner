@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:47
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-02 14:05:57
+ * @Last Modified time: 2023-09-05 22:12:00
  */
 #include <iostream>
 
@@ -66,9 +66,9 @@ int Astar::Search(const VehiclePose& start_pos, const VehiclePose& end_pos,
   cur_node->parent = nullptr;
   cur_node->index = start_pn;
   cur_node->g_score = 0;
-  cur_node->f_score =
-      cfg_->lambda_heu * GetHeu(Vec2d(start_pn[0], start_pn[1]),
-                               Vec2d(end_pn[0], end_pn[1]), cfg_->time_breaker);
+  cur_node->f_score = cfg_->lambda_heu * GetHeu(Vec2d(start_pn[0], start_pn[1]),
+                                                Vec2d(end_pn[0], end_pn[1]),
+                                                cfg_->time_breaker);
   cur_node->node_state = IN_OPEN_SET;
   open_set_.push(cur_node);
   use_node_num_ += 1;
@@ -199,3 +199,7 @@ void Astar::GetPath2D(Path2d& path) {
 // bool Astar::CheckVehiclePose(const VehiclePose& pose) {}
 
 }  // namespace minco_local_planner::path_search
+
+#include "plugin_loader/plugin_loader.hpp"
+PLUGIN_LOADER_REGISTER_CLASS(minco_local_planner::path_search::Astar,
+                             minco_local_planner::path_search::PathSearch)

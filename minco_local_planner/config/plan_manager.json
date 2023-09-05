@@ -1,6 +1,8 @@
 {
     "plan_manager_cfg": {
         "plan_sleep_time": 0.1,
-        "path_search_type": 0
+        "path_search_type": 0,
+        "path_search_lib_path":"/home/ubuntu/Project/minco_local_planner_ws/devel/lib/libastar.so",
+        "path_search_class_name":"minco_local_planner::path_search::Astar"
     }
 }

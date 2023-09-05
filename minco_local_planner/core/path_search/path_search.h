@@ -2,7 +2,7 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-30 13:40:34
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 04:19:25
+ * @Last Modified time: 2023-09-05 22:12:45
  */
 #include <stdint.h>
 
@@ -23,7 +23,7 @@ using namespace config_manager;
 
 class PathSearch : public BaseModule {
  public:
-  typedef std::unique_ptr<PathSearch> Ptr;
+  typedef std::shared_ptr<PathSearch> Ptr;
 
   PathSearch(const std::string& name) : BaseModule(name) {}
   //   设置规划的地图

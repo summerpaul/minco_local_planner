@@ -2,13 +2,13 @@
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 14:32:41
  * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 04:19:16
+ * @Last Modified time: 2023-09-05 22:05:46
  */
 #include <stdint.h>
 
 #ifndef __ASTAR_H__
 #define __ASTAR_H__
-#include "path_search.h"
+#include "path_search/path_search.h"
 
 namespace minco_local_planner::path_search {
 class Astar : public PathSearch {

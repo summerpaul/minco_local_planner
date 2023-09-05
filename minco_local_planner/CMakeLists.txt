@@ -44,6 +44,8 @@ find_package(Eigen3)
 include_directories(core
 ${EIGEN3_INCLUDE_DIR}
 ${PCL_INCLUDE_DIRS}
+core/3rd-party
+core/3rd-party/PluginLoader/include
 )
 
 add_subdirectory(core)
