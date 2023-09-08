@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-09-08 13:05:23
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-08 17:54:36
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-08 23:53:34
  */
 #include <stdint.h>
 
@@ -20,20 +20,20 @@ class MinJerkOpt {
   ~MinJerkOpt() { A.destroy(); }
 
  private:
-  int N;                    // pieceNum
-  Eigen::MatrixXd headPVA;  // 2,3
-  Eigen::MatrixXd tailPVA;  // 2,3
+  int N;           // pieceNum
+  MatDDd headPVA;  // 2,3
+  MatDDd tailPVA;  // 2,3
 
-  Eigen::VectorXd T1;
-  BandedSystem A;     // 6 * N, 6, 6
-  Eigen::MatrixXd b;  // 6*N *2
+  VecXd T1;
+  BandedSystem A;  // 6 * N, 6, 6
+  MatDDd b;        // 6*N *2
 
   // Temp variables
-  Eigen::VectorXd T2;
-  Eigen::VectorXd T3;
-  Eigen::VectorXd T4;
-  Eigen::VectorXd T5;
-  Eigen::MatrixXd gdC;
+  VecXd T2;
+  VecXd T3;
+  VecXd T4;
+  VecXd T5;
+  MatDDd gdC;
   double vmax_, amax_, kmax_;
 
  private:
@@ -67,14 +67,14 @@ class MinJerkOpt {
     return;
   }
 
-  inline void solveAdjGradC(Eigen::MatrixXd &gdC) const {
+  inline void solveAdjGradC(MatDDd &gdC) const {
     A.solveAdj(gdC);
     return;
   }
   //@yuwei revise to 2d
   template <typename EIGENVEC>
-  inline void addPropCtoT(const Eigen::MatrixXd &adjGdC, EIGENVEC &gdT) const {
-    Eigen::MatrixXd B1(6, 2), B2(3, 2);
+  inline void addPropCtoT(const MatDDd &adjGdC, EIGENVEC &gdT) const {
+    MatDDd B1(6, 2), B2(3, 2);
 
     Eigen::RowVector2d negVel, negAcc, negJer, negSnp, negCrk;
 
@@ -114,8 +114,7 @@ class MinJerkOpt {
   }
 
   template <typename EIGENMAT>
-  inline void addPropCtoP(const Eigen::MatrixXd &adjGdC,
-                          EIGENMAT &gdInP) const {
+  inline void addPropCtoP(const MatDDd &adjGdC, EIGENMAT &gdInP) const {
     for (int i = 0; i < N - 1; i++) {
       gdInP.col(i) += adjGdC.row(6 * i + 5).transpose();
     }
@@ -124,31 +123,30 @@ class MinJerkOpt {
 
   //@yuwei revised to vehicle case
   template <typename EIGENVEC>
-  inline void addTimeIntPenalty(const Eigen::VectorXi cons,
-                                const Eigen::VectorXi &idxHs,
-                                const Eigen::Vector2d ci, double &cost,
-                                EIGENVEC &gdT, Eigen::MatrixXd &gdC) const {
+  inline void addTimeIntPenalty(const VecXi cons, const VecXi &idxHs,
+                                const Vec2d ci, double &cost, EIGENVEC &gdT,
+                                MatDDd &gdC) const {
     double pena = 0.0;
     const double vmaxSqr = vmax_ * vmax_;
     const double amaxSqr = amax_ * amax_;
     const double kmaxSqr = kmax_ * kmax_;
-    Eigen::Vector2d sigma, dsigma, ddsigma, dddsigma;
+    Vec2d sigma, dsigma, ddsigma, dddsigma;
     double vel2, acc2, cur2;
 
     double step, alpha;
     double s1, s2, s3, s4, s5;
-    Eigen::Matrix<double, 6, 1> beta0, beta1, beta2, beta3;
-    Eigen::Vector2d outerNormal;
+    Matd<6, 1> beta0, beta1, beta2, beta3;
+    Vec2d outerNormal;
     int K;
     double violaPos, violaVel, violaAcc, violaCur;
     double violaPosPenaD, violaVelPenaD, violaAccPenaD, violaCurPenaD;
     double violaPosPena, violaVelPena, violaAccPena, violaCurPena;
     //@yuwei
-    Eigen::Matrix<double, 6, 2> gradViolaVc, gradViolaAc, gradViolaKc;
+    Matd<6, 2> gradViolaVc, gradViolaAc, gradViolaKc;
     double gradViolaVt, gradViolaAt, gradViolaKt;
     double omg;
 
-    Eigen::Matrix2d B_h;
+    Mat2d B_h;
     B_h << 0, -1, 1, 0;
 
     int innerLoop, idx;
@@ -253,8 +251,8 @@ class MinJerkOpt {
   }
 
  public:
-  inline void reset(const Eigen::MatrixXd &headState,
-                    const Eigen::MatrixXd &tailState, const int &pieceNum) {
+  inline void reset(const MatDDd &headState, const MatDDd &tailState,
+                    const int &pieceNum) {
     N = pieceNum;
     headPVA = headState;
     tailPVA = tailState;
@@ -266,7 +264,7 @@ class MinJerkOpt {
     return;
   }
 
-  inline void generate(const Eigen::MatrixXd &inPs, const Eigen::VectorXd &ts) {
+  inline void generate(const MatDDd &inPs, const VecXd &ts) {
     T1 = ts;
     T2 = T1.cwiseProduct(T1);
     T3 = T2.cwiseProduct(T1);
@@ -345,11 +343,11 @@ class MinJerkOpt {
     return;
   }
 
-  inline const Eigen::MatrixXd &get_b() const { return b; }
+  inline const MatDDd &get_b() const { return b; }
 
-  inline const Eigen::VectorXd &get_T1() const { return T1; }
+  inline const VecXd &get_T1() const { return T1; }
 
-  inline Eigen::MatrixXd &get_gdC() { return gdC; }
+  inline MatDDd &get_gdC() { return gdC; }
 
   inline double getTrajJerkCost() const {
     double objective = 0.0;
@@ -387,11 +385,10 @@ class MinJerkOpt {
   }
 
   template <typename EIGENVEC, typename EIGENMAT>
-  inline void evalTrajCostGrad(const Eigen::VectorXi &cons,
-                               const Eigen::VectorXi &idxHs, const double &vmax,
-                               const double &amax, const double &kmax,
-                               const Eigen::Vector2d &ci, double &cost,
-                               EIGENVEC &gdT, EIGENMAT &gdInPs) {
+  inline void evalTrajCostGrad(const VecXi &cons, const VecXi &idxHs,
+                               const double &vmax, const double &amax,
+                               const double &kmax, const Vec2d &ci,
+                               double &cost, EIGENVEC &gdT, EIGENMAT &gdInPs) {
     gdT.setZero();
     gdInPs.setZero();
     gdC.setZero();
@@ -422,10 +419,10 @@ class MinJerkOpt {
     return traj;
   }
 
-  inline Eigen::MatrixXd getInitConstraintPoints(const int K) const {
-    Eigen::MatrixXd pts(2, N * K + 1);
-    Eigen::Vector2d pos;
-    Eigen::Matrix<double, 6, 1> beta0;
+  inline MatDDd getInitConstraintPoints(const int K) const {
+    MatDDd pts(2, N * K + 1);
+    Vec2d pos;
+    Matd<6, 1> beta0;
     double s1, s2, s3, s4, s5;
     double step;
     int i_dp = 0;

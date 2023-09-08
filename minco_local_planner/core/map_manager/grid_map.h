@@ -1,8 +1,8 @@
 /**
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:20:40
- * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 08:50:26
+ * @Last Modified by:   Xia Yunkai
+ * @Last Modified time: 2023-09-09 00:20:22
  */
 #include <stdint.h>
 
@@ -144,6 +144,26 @@ class GridMap {
       }
     }
   }
+
+  void CheckCollisionUsingLine(const Vec2d &start_pt, const Vec2d &end_pt,
+                               bool &res) {
+    res = false;
+    RayCaster raycaster;
+    bool need_ray = raycaster.SetInput(start_pt * res_inv_, end_pt * res_inv_);
+    if (!need_ray) return;
+
+    Vec2d half(0.5, 0.5);
+    Vec2d ray_pt;
+    while (raycaster.Step(ray_pt)) {
+      Vec2d tmp = (ray_pt + half) * res_;
+      if (IsOccupied(tmp)) {
+        res = true;
+        return;
+      }
+    }
+  }
+
+  
 
   bool Query(const Vec2i &pn) {
     if (!IsVerify(pn)) {

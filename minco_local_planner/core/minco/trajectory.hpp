@@ -37,42 +37,37 @@ namespace minco_local_planner::minco {
 
 using namespace basis;
 constexpr double PI = 3.1415926;
-typedef Matd<2, 6> CoefficientMat;
+typedef Matd<2, 6> PosCoefficientMat;
 typedef Matd<2, 5> VelCoefficientMat;
 typedef Matd<2, 4> AccCoefficientMat;
 
-class Piece  // component from poly
-{
- private:  // duration + coeffMat
-  double duration;
-  CoefficientMat coeffMat;
+class Piece {
+ private:
+  double duration_;
+  PosCoefficientMat coeff_mat_;
 
-  //@yuwei
   int dim = 2;
   int order = 5;
-  //@yuwei: filter the Singularity (enable forward and reverse moving)
+
   int singul;
-  // common::VehicleParam vp_;
 
  public:
   Piece() = default;
 
-  Piece(double dur, const CoefficientMat &cMat, int s)
-      : duration(dur), coeffMat(cMat), singul(s) {}
-  //@yuwei
+  Piece(double dur, const PosCoefficientMat &cMat, int s)
+      : duration_(dur), coeff_mat_(cMat), singul(s) {}
   inline int getDim() const { return dim; }
-  //@yuwei
   inline int getOrder() const { return order; }
 
-  inline double getDuration() const { return duration; }
+  inline double getDuration() const { return duration_; }
 
-  inline const CoefficientMat &getCoeffMat() const { return coeffMat; }
+  inline const PosCoefficientMat &getCoeffMat() const { return coeff_mat_; }
 
   inline VelCoefficientMat getVelCoeffMat() const {
     VelCoefficientMat velCoeffMat;
     int n = 1;
     for (int i = 4; i >= 0; i--) {
-      velCoeffMat.col(i) = n * coeffMat.col(i);
+      velCoeffMat.col(i) = n * coeff_mat_.col(i);
       n++;
     }
     return velCoeffMat;
@@ -81,43 +76,43 @@ class Piece  // component from poly
   inline int getSingul(const double &t) const { return singul; }
 
   // the point in the rear axle center
-  inline Eigen::Vector2d getPos(const double &t) const {
-    Eigen::Vector2d pos(0.0, 0.0);
+  inline Vec2d getPos(const double &t) const {
+    Vec2d pos(0.0, 0.0);
     double tn = 1.0;
     for (int i = order; i >= 0; i--) {
-      pos += tn * coeffMat.col(i);
+      pos += tn * coeff_mat_.col(i);
       tn *= t;
     }
     return pos;
   }
 
-  inline Eigen::Matrix2d getR(const double &t) const {
-    Eigen::Vector2d current_v = getdSigma(t);
-    Eigen::Matrix2d rotation_matrix;
+  inline Mat2d getR(const double &t) const {
+    Vec2d current_v = getdSigma(t);
+    Mat2d rotation_matrix;
     rotation_matrix << current_v(0), -current_v(1), current_v(1), current_v(0);
     rotation_matrix = singul * rotation_matrix / current_v.norm();
 
     return rotation_matrix;
   }
 
-  inline Eigen::Matrix2d getRdot(const double &t) const {
-    Eigen::Vector2d current_v = getdSigma(t);
-    Eigen::Vector2d current_a = getddSigma(t);
-    Eigen::Matrix2d temp_a_ba, temp_v_bv;
+  inline Mat2d getRdot(const double &t) const {
+    Vec2d current_v = getdSigma(t);
+    Vec2d current_a = getddSigma(t);
+    Mat2d temp_a_ba, temp_v_bv;
     temp_a_ba << current_a(0), -current_a(1), current_a(1), current_a(0);
     temp_v_bv << current_v(0), -current_v(1), current_v(1), current_v(0);
-    Eigen::Matrix2d R_dot = singul * (temp_a_ba / current_v.norm() -
-                                      temp_v_bv / pow(current_v.norm(), 3) *
-                                          (current_v.transpose() * current_a));
+    Mat2d R_dot = singul * (temp_a_ba / current_v.norm() -
+                            temp_v_bv / pow(current_v.norm(), 3) *
+                                (current_v.transpose() * current_a));
 
     return R_dot;
   }
 
   // the point in the rear axle center
-  inline std::vector<Eigen::Vector2d> setBoundObs(const double &t, double d_x,
-                                                  double d_y) const {
-    std::vector<Eigen::Vector2d> BoundObs;
-    Eigen::Vector2d pos = getPos(t);
+  inline std::vector<Vec2d> setBoundObs(const double &t, double d_x,
+                                        double d_y) const {
+    std::vector<Vec2d> BoundObs;
+    Vec2d pos = getPos(t);
     double angle = getAngle(t);
 
     double cos_theta = cos(angle);
@@ -130,35 +125,35 @@ class Piece  // component from poly
     double d_lx = d_x * cos_theta;
     double d_ly = d_x * sin_theta;
     // Counterclockwise from left-front vertex
-    BoundObs.push_back(Eigen::Vector2d(c_x - d_wx + d_lx, c_y + d_wy + d_ly));
-    BoundObs.push_back(Eigen::Vector2d(c_x - d_wx - d_lx, c_y - d_ly + d_wy));
-    BoundObs.push_back(Eigen::Vector2d(c_x + d_wx - d_lx, c_y - d_wy - d_ly));
-    BoundObs.push_back(Eigen::Vector2d(c_x + d_wx + d_lx, c_y + d_ly - d_wy));
+    BoundObs.push_back(Vec2d(c_x - d_wx + d_lx, c_y + d_wy + d_ly));
+    BoundObs.push_back(Vec2d(c_x - d_wx - d_lx, c_y - d_ly + d_wy));
+    BoundObs.push_back(Vec2d(c_x + d_wx - d_lx, c_y - d_wy - d_ly));
+    BoundObs.push_back(Vec2d(c_x + d_wx + d_lx, c_y + d_ly - d_wy));
 
     return BoundObs;
   }
 
-  inline Eigen::Vector2d getdSigma(const double &t) const {
-    Eigen::Vector2d dsigma(0.0, 0.0);
+  inline Vec2d getdSigma(const double &t) const {
+    Vec2d dsigma(0.0, 0.0);
     double tn = 1.0;
     int n = 1;
 
     for (int i = order - 1; i >= 0; i--) {
-      dsigma += n * tn * coeffMat.col(i);
+      dsigma += n * tn * coeff_mat_.col(i);
       tn *= t;
       n++;
     }
     return dsigma;
   }
 
-  inline Eigen::Vector2d getddSigma(const double &t) const {
-    Eigen::Vector2d ddsigma(0.0, 0.0);
+  inline Vec2d getddSigma(const double &t) const {
+    Vec2d ddsigma(0.0, 0.0);
     double tn = 1.0;
     int m = 1;
     int n = 2;
 
     for (int i = order - 2; i >= 0; i--) {
-      ddsigma += m * n * tn * coeffMat.col(i);
+      ddsigma += m * n * tn * coeff_mat_.col(i);
       tn *= t;
       m++;
       n++;
@@ -166,16 +161,16 @@ class Piece  // component from poly
     return ddsigma;
   }
 
-  inline Eigen::Vector2d getdddSigma(const double &t) const {
-    Eigen::Vector2d dddsigma(0.0, 0.0);
+  inline Vec2d getdddSigma(const double &t) const {
+    Vec2d dddsigma(0.0, 0.0);
     double tn = 1.0;
     int l = 1;
     int m = 2;
     int n = 3;
 
-    std::cout << "coeffMat is" << coeffMat << std::endl;
+    std::cout << "coeffMat is" << coeff_mat_ << std::endl;
     for (int i = order - 3; i >= 0; i--) {
-      dddsigma += l * m * n * tn * coeffMat.col(i);
+      dddsigma += l * m * n * tn * coeff_mat_.col(i);
 
       tn *= t;
       l++;
@@ -189,35 +184,19 @@ class Piece  // component from poly
 
   //@yuwei get heading angle theta
   inline double getAngle(const double &t) const {
-    Eigen::Vector2d dsigma = getdSigma(t);
+    Vec2d dsigma = getdSigma(t);
 
     return std::atan2(singul * dsigma(1), singul * dsigma(0));  //[-PI, PI]
   }
 
   //@yuwei
   inline double getCurv(const double &t) const {
-    Eigen::Vector2d dsigma = getdSigma(t);
-    Eigen::Vector2d ddsigma = getddSigma(t);
+    Vec2d dsigma = getdSigma(t);
+    Vec2d ddsigma = getddSigma(t);
 
     if (dsigma.norm() < 1e-6) {
       return 0.0;
     } else {
-      //[-PI/2, PI/2]
-      //   std::cout<<"numerator: "<<
-      //   (dsigma(0)*ddsigma(1)-dsigma(1)*ddsigma(0))<<" deno:
-      //   "<<std::pow(dsigma.norm(), 3)
-      //   <<" cur: "<<(dsigma(0)*ddsigma(1)-dsigma(1)*ddsigma(0))/
-      //   sqrt(std::pow((std::pow(dsigma.norm(), 2)+1e-4),3))<<"\n";
-      // std::cout<<"cur: "<<(dsigma(0)*ddsigma(1)-dsigma(1)*ddsigma(0))/
-      // std::pow(dsigma.norm(), 3)<<"vel: "
-      // <<dsigma.norm()<<" acc: "<< ddsigma.norm()<<std::endl;
-      std::cout << "cur: "
-                << (dsigma(0) * ddsigma(1) - dsigma(1) * ddsigma(0)) /
-                       std::pow(dsigma.norm(), 3)
-                // <<" numera: "<<(dsigma(0)*ddsigma(1)-dsigma(1)*ddsigma(0))<<"
-                // deno: "<<std::pow(dsigma.norm(), 3)<< "vel:
-                // "<<dsigma.transpose()<<"acc: "<<ddsigma.transpose()
-                << "\n";
       return singul * (dsigma(0) * ddsigma(1) - dsigma(1) * ddsigma(0)) /
              std::pow(dsigma.norm(), 3);
     }
@@ -225,15 +204,15 @@ class Piece  // component from poly
 
   //@yuwei
   inline double getVel(const double &t) const {
-    Eigen::Vector2d dsigma = getdSigma(t);
+    Vec2d dsigma = getdSigma(t);
 
     return singul * dsigma.norm();
   }
 
   //@yuwei
   inline double getAcc(const double &t) const {
-    Eigen::Vector2d dsigma = getdSigma(t);
-    Eigen::Vector2d ddsigma = getddSigma(t);
+    Vec2d dsigma = getdSigma(t);
+    Vec2d ddsigma = getddSigma(t);
 
     if (dsigma.norm() < 1e-6) {
       return 0.0;
@@ -243,12 +222,12 @@ class Piece  // component from poly
     }
   }
 
-  inline CoefficientMat normalizePosCoeffMat() const {
-    CoefficientMat nPosCoeffsMat;
+  inline PosCoefficientMat normalizePosCoeffMat() const {
+    PosCoefficientMat nPosCoeffsMat;
     double t = 1.0;
     for (int i = order; i >= 0; i--) {
-      nPosCoeffsMat.col(i) = coeffMat.col(i) * t;
-      t *= duration;
+      nPosCoeffsMat.col(i) = coeff_mat_.col(i) * t;
+      t *= duration_;
     }
     return nPosCoeffsMat;
   }
@@ -264,7 +243,7 @@ class Trajectory {
   Trajectory() = default;
 
   Trajectory(const std::vector<double> &durs,
-             const std::vector<CoefficientMat> &cMats, int s) {
+             const std::vector<PosCoefficientMat> &cMats, int s) {
     int N = std::min(durs.size(), cMats.size());
     pieces.reserve(N);
     for (int i = 0; i < N; i++) {
@@ -341,7 +320,7 @@ class Trajectory {
     return;
   }
 
-  inline void emplace_back(const double &dur, const CoefficientMat &cMat,
+  inline void emplace_back(const double &dur, const PosCoefficientMat &cMat,
                            int s) {
     pieces.emplace_back(dur, cMat, s);
     direction = s;
@@ -382,85 +361,59 @@ class Trajectory {
     return idx;
   }
 
-  //@yuwei
-  inline Eigen::Vector2d getPos(double t) const {
+  inline Vec2d getPos(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getPos(t);
   }
 
-  // MCJ
-  inline Eigen::Matrix2d getR(double t) const {
+  inline Mat2d getR(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getR(t);
   }
 
-  // MCJ
-  inline Eigen::Matrix2d getRdot(double t) const {
+  inline Mat2d getRdot(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getRdot(t);
   }
 
-  //@yuwei
-  // inline std::vector<Eigen::Vector2d> getBoundPts(double t) const
-  // {
-  //     int pieceIdx = locatePieceIdx(t);
-  //     return pieces[pieceIdx].getBoundPts(t);
-  // }
-
-  //@yuwei
-  inline std::vector<Eigen::Vector2d> setBoundObs(double t, double d_x,
-                                                  double d_y) const {
+  inline std::vector<Vec2d> setBoundObs(double t, double d_x,
+                                        double d_y) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].setBoundObs(t, d_x, d_y);
   }
 
-  //@yuwei
-  inline Eigen::Vector2d getdSigma(double t) const {
+  inline Vec2d getdSigma(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getdSigma(t);
   }
 
-  //@yuwei
-  inline Eigen::Vector2d getddSigma(double t) const {
+  inline Vec2d getddSigma(double t) const {
     int pieceIdx = locatePieceIdx(t);
-    // std::cout << "pieceIdx is"<< pieceIdx << std::endl;
-    // std::cout << "t is"<< t << std::endl;
+
     return pieces[pieceIdx].getddSigma(t);
   }
 
-  //@yuwei
   inline double getVel(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getVel(t);
   }
 
-  //@yuwei
   inline double getAcc(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getAcc(t);
   }
 
-  //@yuwei
   inline double getAngle(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getAngle(t);
   }
 
-  //@yuwei
   inline double getCurv(double t) const {
     int pieceIdx = locatePieceIdx(t);
     return pieces[pieceIdx].getCurv(t);
   }
 
-  //@yuwei
-  // inline double getSteer(double t) const
-  // {
-  //     int pieceIdx = locatePieceIdx(t);
-  //     return pieces[pieceIdx].getSteer(t);
-  // }
-
-  //@yuwei
-  inline Eigen::Vector2d getJuncPos(int juncIdx) const {
+  inline Vec2d getJuncPos(int juncIdx) const {
     if (juncIdx != getPieceNum()) {
       return pieces[juncIdx].getCoeffMat().col(5);
     } else {
@@ -468,21 +421,15 @@ class Trajectory {
     }
   }
 
-  //@yuwei
-  inline Eigen::Vector2d getJuncdSigma(int juncIdx) const {
+  inline Vec2d getJuncdSigma(int juncIdx) const {
     if (juncIdx != getPieceNum()) {
-      // std::cout <<"[getJuncdSigma] get coeff" <<
-      // pieces[juncIdx].getCoeffMat() << std::endl;
       return pieces[juncIdx].getCoeffMat().col(4);
     } else {
       return pieces[juncIdx - 1].getdSigma(pieces[juncIdx - 1].getDuration());
     }
   }
 
-  //@yuwei
-  inline Eigen::Vector2d getJuncddSigma(int juncIdx) const {
-    // std::cout <<"[getJuncdSigma] get coeff" << pieces[juncIdx].getCoeffMat()
-    // << std::endl;
+  inline Vec2d getJuncddSigma(int juncIdx) const {
     if (juncIdx != getPieceNum()) {
       return pieces[juncIdx].getCoeffMat().col(3) * 2.0;
     } else {
@@ -490,7 +437,6 @@ class Trajectory {
     }
   }
 
-  // zxzx
   inline std::pair<int, double> locatePieceIdxWithRatio(double &t) const {
     int N = getPieceNum();
     int idx;
@@ -508,9 +454,8 @@ class Trajectory {
     return idx_ratio;
   }
 
-  // zxzx
-  inline Eigen::Vector2d getPoswithIdxRatio(
-      double t, std::pair<int, double> &idx_ratio) const {
+  inline Vec2d getPoswithIdxRatio(double t,
+                                  std::pair<int, double> &idx_ratio) const {
     idx_ratio = locatePieceIdxWithRatio(t);
     return pieces[idx_ratio.first].getPos(t);
   }
