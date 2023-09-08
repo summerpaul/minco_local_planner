@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-24 14:19:40
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-03 09:57:16
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-08 14:54:28
  */
 #include <stdint.h>
 
@@ -10,6 +10,7 @@
 #define __DATA_TYPE_H__
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
+#include <cmath>
 #include <iostream>
 #include <vector>
 namespace minco_local_planner::basis {
@@ -22,12 +23,14 @@ typedef Vecd<3> Vec3d;
 typedef Vecd<4> Vec4d;
 typedef Vecd<5> Vec5d;
 typedef Vecd<6> Vec6d;
+typedef Vecd<Eigen::Dynamic> VecXd;
 
 template <int N>
 using Veci = Eigen::Matrix<int, N, 1>;
 
 typedef Veci<2> Vec2i;
 typedef Veci<3> Vec3i;
+typedef Veci<Eigen::Dynamic> VecXi;
 
 template <typename T>
 using vec_E = std::vector<T, Eigen::aligned_allocator<T>>;
@@ -53,7 +56,13 @@ typedef Matd<6, 6> Mat6d;
 
 typedef Matd<4, 2> Mat4x2d;
 
-typedef Matd<Eigen::Dynamic, Eigen::Dynamic> MatDd;
+typedef Matd<Eigen::Dynamic, Eigen::Dynamic> MatDDd;
+
+template <int N>
+using MatDNd = Eigen::Matrix<double, Eigen::Dynamic, N>;
+
+template <int N>
+using MatNDd = Eigen::Matrix<double, N, Eigen::Dynamic>;
 
 typedef Eigen::Transform<double, 2, Eigen::Affine> Aff2d;
 
@@ -67,37 +76,18 @@ typedef vec_Vec2d Points2d;
 typedef vec_Vec2d Path2d;
 typedef Vec3d Pose2d;
 
+template <int N>
+using vec_Vecd = vec_E<Vecd<N>>;
 
+const double kBigEPS = 1e-1;
+
+const double kEPS = 1e-6;
+
+const double kSmallEPS = 1e-10;
+
+const double kPi = std::acos(-1.0);
+
+const double kInf = 1e20;
 
 }  // namespace minco_local_planner::basis
 #endif /* __DATA_TYPE_H__ */
-
-
-///Set red font in printf funtion
-#ifndef ANSI_COLOR_RED
-#define ANSI_COLOR_RED "\x1b[1;31m"
-#endif
-///Set green font in printf funtion
-#ifndef ANSI_COLOR_GREEN
-#define ANSI_COLOR_GREEN "\x1b[1;32m"
-#endif
-///Set yellow font in printf funtion
-#ifndef ANSI_COLOR_YELLOW
-#define ANSI_COLOR_YELLOW "\x1b[1;33m"
-#endif
-///Set blue font in printf funtion
-#ifndef ANSI_COLOR_BLUE
-#define ANSI_COLOR_BLUE "\x1b[1;34m"
-#endif
-///Set magenta font in printf funtion
-#ifndef ANSI_COLOR_MAGENTA
-#define ANSI_COLOR_MAGENTA "\x1b[1;35m"
-#endif
-///Set cyan font in printf funtion
-#ifndef ANSI_COLOR_CYAN
-#define ANSI_COLOR_CYAN "\x1b[1;36m"
-#endif
-///Reset font color in printf funtion
-#ifndef ANSI_COLOR_RESET
-#define ANSI_COLOR_RESET "\x1b[0m"
-#endif

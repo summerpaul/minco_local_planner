@@ -1,8 +1,8 @@
 /**
  * @Author: Yunkai Xia
  * @Date:   2023-08-31 08:48:06
- * @Last Modified by:   Xia Yunkai
- * @Last Modified time: 2023-09-06 00:00:56
+ * @Last Modified by:   Yunkai Xia
+ * @Last Modified time: 2023-09-06 08:56:31
  */
 #include "plan_manager.h"
 
@@ -32,9 +32,15 @@ bool PlanManager::Init() {
     LOG_ERROR("failed to load path search plugin because {} ", e.what());
     return false;
   }
-  path_search_ptr_ =
-      path_search_plugin_loader_->createSharedInstance<PathSearch>(
-          cfg_->path_search_class_name);
+
+  try {
+    path_search_ptr_ =
+        path_search_plugin_loader_->createSharedInstance<PathSearch>(
+            cfg_->path_search_class_name);
+  } catch (const std::exception& e) {
+    LOG_ERROR("failed to create path search plugin because {} ", e.what());
+    return false;
+  }
 
   if (!path_search_ptr_) {
     LOG_ERROR("path_search_ptr_ is null ");

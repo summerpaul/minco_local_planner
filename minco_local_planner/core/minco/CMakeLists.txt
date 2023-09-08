@@ -1,0 +1,1 @@
+add_executable(minco_test minco_test.cpp)
