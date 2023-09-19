@@ -15,7 +15,9 @@
         "raycast_dis": 0.5,
         "raycast_res": 0.10000000000000001,
         "use_global_map": true,
-        "esdf_map_res":0.1,
-        "use_esdf_map":true
+        "esdf_map_res": 0.1,
+        "use_esdf_map": true,
+        "width_offset_scale": -0.5,
+        "height_offset_scale": -0.5
     }
 }
