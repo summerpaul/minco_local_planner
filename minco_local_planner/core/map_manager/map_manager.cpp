@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-05 11:03:29
+ * @Last Modified time: 2023-09-19 13:30:03
  */
 #include "map_manager.h"
 
@@ -77,7 +77,8 @@ void MapManager::GenerateInitLocalGridMap() {
   const int data_size = grid_map_width_ * grid_map_height_;
   data.resize(data_size);
   data.assign(data_size, FREE);
-  map_offset_ = -0.5 * Pose2d(cfg_->local_map_width, cfg_->local_map_height, 0);
+  map_offset_ = Pose2d(cfg_->width_offset_scale * cfg_->local_map_width,
+                       cfg_->height_offset_scale * cfg_->local_map_height, 0);
   Pose2d origin;
   const Vec2i dim(grid_map_width_, grid_map_height_);
   local_map_ptr_->CreateGridMap(origin, dim, data, res);
@@ -179,6 +180,7 @@ void MapManager::GenerateLocalGridMapTimer() {
     const int y = std::round(point.y * grid_map_res_inv_ - 0.5) +
                   std::ceil(0.5 * grid_map_height_);
     Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
+    // 将栅格地图进行膨胀
     local_map_ptr_->SetInfOccupied(pt, cfg_->grid_map_inf_size);
   }
 }
@@ -198,6 +200,7 @@ void MapManager::GenerateLocalESDFMapTimer() {
                   std::ceil(0.5 * esdf_map_width_);
     const int y = std::round(point.y * esdf_map_res_inv_ - 0.5) +
                   std::ceil(0.5 * esdf_map_height_);
+                  // 
     esdf_map_ptr_->SetOccupied(Vec2i(x, y));
   }
   esdf_map_ptr_->GenerateESDF2d();
