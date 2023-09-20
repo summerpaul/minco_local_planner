@@ -2,7 +2,7 @@
  * @Author: Xia Yunkai
  * @Date:   2023-08-24 21:22:24
  * @Last Modified by:   Yunkai Xia
- * @Last Modified time: 2023-09-19 13:30:03
+ * @Last Modified time: 2023-09-20 15:32:16
  */
 #include "map_manager.h"
 
@@ -166,42 +166,41 @@ void MapManager::GenerateLocalGridMapTimer() {
   // 获取原始的lasercan数据
 
   std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
-  const VehiclePose pose =
-      ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
-
   // 重置栅格地图数据
   local_map_ptr_->SetDataZero();
+  const Pose2d origin = ModuleManager::GetInstance()
+                            ->GetRuntimeManager()
+                            ->GetVehiclePose()
+                            .GetPose2d();
   //
-  local_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
+  local_map_ptr_->SetOrigin(AddPose2d(origin, map_offset_));
 
   for (auto &point : transformed_pointcloud_.points) {
-    const int x = std::round(point.x * grid_map_res_inv_ - 0.5) +
-                  std::ceil(0.5 * grid_map_width_);
-    const int y = std::round(point.y * grid_map_res_inv_ - 0.5) +
-                  std::ceil(0.5 * grid_map_height_);
-    Vec2d pt = local_map_ptr_->IntToDouble(Vec2i(x, y));
+    //
+    Vec2d global_pt = AddVec2d(origin, Vec2d(point.x, point.y));
+
     // 将栅格地图进行膨胀
-    local_map_ptr_->SetInfOccupied(pt, cfg_->grid_map_inf_size);
+    local_map_ptr_->SetInfOccupied(global_pt, cfg_->grid_map_inf_size);
   }
 }
 
 void MapManager::GenerateLocalESDFMapTimer() {
   std::lock_guard<std::mutex> lock(transformed_pointcloud_mutex_);
-  const VehiclePose pose =
-      ModuleManager::GetInstance()->GetRuntimeManager()->GetVehiclePose();
+  const Pose2d origin = ModuleManager::GetInstance()
+                            ->GetRuntimeManager()
+                            ->GetVehiclePose()
+                            .GetPose2d();
 
   // 重置栅格地图数据
   esdf_map_ptr_->SetDataZero();
   //
-  esdf_map_ptr_->SetOrigin(AddPose2d(pose.GetPose2d(), map_offset_));
+  esdf_map_ptr_->SetOrigin(AddPose2d(origin, map_offset_));
 
   for (auto &point : transformed_pointcloud_.points) {
-    const int x = std::round(point.x * esdf_map_res_inv_ - 0.5) +
-                  std::ceil(0.5 * esdf_map_width_);
-    const int y = std::round(point.y * esdf_map_res_inv_ - 0.5) +
-                  std::ceil(0.5 * esdf_map_height_);
-                  // 
-    esdf_map_ptr_->SetOccupied(Vec2i(x, y));
+    Vec2d global_pt = AddVec2d(origin, Vec2d(point.x, point.y));
+    //
+    Vec2i pn = esdf_map_ptr_->DoubleToInt(global_pt);
+    esdf_map_ptr_->SetOccupied(pn);
   }
   esdf_map_ptr_->GenerateESDF2d();
 }
